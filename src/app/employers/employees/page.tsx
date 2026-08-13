@@ -12,6 +12,9 @@ export default function EmployeesManagementPage() {
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const token = (session as any)?.apiToken;
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
@@ -24,9 +27,12 @@ export default function EmployeesManagementPage() {
 
   const handleCreateEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/employees", {
+    const res = await fetch(`${API_URL}/api/auth/employe`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
       body: JSON.stringify({ username: newUsername, password: newPassword }),
     });
     if (res.ok) {

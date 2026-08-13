@@ -3,23 +3,39 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import React from "react";
 import Link from "next/link";
-import connectToDatabase from "@/lib/mongodb";
-import { Visa } from "@/models/Visa";
 
 export default async function UserVisasPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
+  if (!session || !(session as any).apiToken) {
     redirect("/login");
   }
 
-  await connectToDatabase();
   const userId = (session.user as any).id;
-  const rawVisas = await Visa.find({ userid: userId }).sort({ createdAt: -1 });
-  const visas = JSON.parse(JSON.stringify(rawVisas));
+  const token = (session as any).apiToken;
 
-  const draftVisas = visas.filter((v: any) => v.status === "Draft");
-  const submittedVisas = visas.filter((v: any) => v.status !== "Draft");
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  let allData = [];
+  try {
+    const res = await fetch(`${API_URL}/api/visas/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      cache: 'no-store'
+    });
+    if (res.ok) {
+      const data = await res.json();
+      allData = data.visas || [];
+    }
+  } catch (e) {
+    console.error("Failed to fetch visas", e);
+  }
+
+  const visas = allData.filter((item: any) => item.applicationType === 'visa' || !item.applicationType);
+
+  const draftVisas = visas.filter((v: any) => v.status === "Draft" || v.visaStatus === "Draft");
+  const submittedVisas = visas.filter((v: any) => v.status !== "Draft" && v.visaStatus !== "Draft");
 
   const tableHeaderStyle = { padding: "15px 12px", textAlign: "left" as const, fontWeight: "bold", borderRight: "1px solid #d1d5db", borderBottom: "2px solid #1a1f36", verticalAlign: "bottom" as const };
   const tableCellStyle = { padding: "15px 12px", borderRight: "1px solid #d1d5db", verticalAlign: "top" as const };

@@ -12,6 +12,9 @@ export default function UsersManagementPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const token = (session as any)?.apiToken;
   const itemsPerPage = 10;
 
   // Modals state
@@ -23,9 +26,12 @@ export default function UsersManagementPage() {
   const [editPassword, setEditPassword] = useState("");
 
   const fetchUsers = async () => {
-    const res = await fetch("/api/users");
+    if (!token) return;
+    const res = await fetch(`${API_URL}/api/auth/users`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     const data = await res.json();
-    if (res.ok) setUsers(data.users);
+    if (res.ok) setUsers(data || []);
   };
 
   useEffect(() => {
@@ -56,9 +62,12 @@ export default function UsersManagementPage() {
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/users", {
+    const res = await fetch(`${API_URL}/api/auth/user`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
       body: JSON.stringify({ username: newUsername, password: newPassword }),
     });
     if (res.ok) {
@@ -73,10 +82,13 @@ export default function UsersManagementPage() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/users", {
+    const res = await fetch(`${API_URL}/api/auth/users/${editUserId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: editUserId, newPassword: editPassword }),
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ newPassword: editPassword }),
     });
     if (res.ok) {
       setEditUserId(null);
@@ -92,7 +104,10 @@ export default function UsersManagementPage() {
       !confirm("Are you sure? This will delete the user and all their visas.")
     )
       return;
-    const res = await fetch(`/api/users?id=${userId}`, { method: "DELETE" });
+    const res = await fetch(`${API_URL}/api/auth/users/${userId}`, { 
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
     if (res.ok) fetchUsers();
     else alert("Error deleting user");
   };

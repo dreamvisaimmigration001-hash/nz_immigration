@@ -216,6 +216,23 @@ export default function Navbar() {
                 >
                   My sponsorships
                 </Link>
+                <Link
+                  href="/dashboard/aewv-visa"
+                  style={{
+                    fontWeight: "bold",
+                    color: pathname === "/dashboard/aewv-visa" ? "#1E222C" : "#6b7280",
+                    textDecoration: "none",
+                    borderBottom:
+                      pathname === "/dashboard/aewv-visa"
+                        ? "3px solid #1E222C"
+                        : "3px solid transparent",
+                    paddingBottom: "18px",
+                    paddingTop: "18px",
+                    fontSize: "15px",
+                  }}
+                >
+                  AEWV Visa
+                </Link>
               </nav>
             </div>
           ) : (

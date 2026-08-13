@@ -1,8 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import connectToDatabase from "@/lib/mongodb";
-import { User } from "@/models/User";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,20 +15,36 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.username || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
-        await connectToDatabase();
-        const user = await User.findOne({ username: credentials.username });
-        if (!user) {
-          throw new Error("No user found");
+        
+        try {
+          const res = await fetch(`${API_URL}/api/auth/login`, {
+            method: 'POST',
+            body: JSON.stringify({
+              username: credentials.username,
+              password: credentials.password,
+            }),
+            headers: { "Content-Type": "application/json" }
+          });
+          
+          const data = await res.json();
+          
+          if (!res.ok) {
+            throw new Error(data.message || "Invalid credentials");
+          }
+          
+          if (data.user && data.token) {
+            return {
+              id: data.user.id,
+              name: data.user.username,
+              role: data.user.role,
+              token: data.token
+            };
+          }
+          
+          return null;
+        } catch (error: any) {
+          throw new Error(error.message);
         }
-        const isValid = await bcrypt.compare(credentials.password, user.password!);
-        if (!isValid) {
-          throw new Error("Invalid password");
-        }
-        return {
-          id: user._id.toString(),
-          name: user.username,
-          role: user.role
-        };
       }
     })
   ],
@@ -38,6 +53,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = user.role;
         token.id = user.id;
+        token.apiToken = user.token; // Store Express API token
       }
       return token;
     },
@@ -48,6 +64,7 @@ export const authOptions: NextAuthOptions = {
           role: token.role,
           id: token.id
         };
+        (session as any).apiToken = token.apiToken; // Make token available to client
       }
       return session;
     }
@@ -57,7 +74,7 @@ export const authOptions: NextAuthOptions = {
     maxAge: 60 * 60, // 1 hour
   },
   pages: {
-    signIn: '/login', // Adjust if you have a custom login page
+    signIn: '/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

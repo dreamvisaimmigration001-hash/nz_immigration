@@ -3,32 +3,43 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import React from "react";
 import Link from "next/link";
-import connectToDatabase from "@/lib/mongodb";
-import { Visa } from "@/models/Visa";
-import { Sponsorship } from "@/models/Sponsorship";
 
 export default async function UserDashboardPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
+  if (!session || !(session as any).apiToken) {
     redirect("/login");
   }
 
   const sharingId = "CSC-W2V2-2020--01005";
-
-  await connectToDatabase();
   
   const userId = (session.user as any).id;
-  const rawVisas = await Visa.find({ userid: userId }).sort({ createdAt: -1 });
-  const rawSponsorships = await Sponsorship.find({ userid: userId }).sort({ createdAt: -1 });
+  const token = (session as any).apiToken;
 
-  // Serialize data to avoid passing Mongoose documents to client components if we were using them,
-  // but it's safe for simple rendering as well.
-  const visas = JSON.parse(JSON.stringify(rawVisas));
-  const sponsorships = JSON.parse(JSON.stringify(rawSponsorships));
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-  const draftVisas = visas.filter((v: any) => v.status === "Draft");
-  const submittedVisas = visas.filter((v: any) => v.status !== "Draft");
+  let allData = [];
+  try {
+    const res = await fetch(`${API_URL}/api/visas/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      cache: 'no-store'
+    });
+    if (res.ok) {
+      const data = await res.json();
+      allData = data.visas || [];
+    }
+  } catch (e) {
+    console.error("Failed to fetch data", e);
+  }
+
+  // Filter based on applicationType
+  const rawVisas = allData.filter((item: any) => item.applicationType === 'visa' || !item.applicationType);
+  const sponsorships = allData.filter((item: any) => item.applicationType === 'sponsorship');
+
+  const draftVisas = rawVisas.filter((v: any) => v.visaStatus === "Draft" || v.status === "Draft");
+  const submittedVisas = rawVisas.filter((v: any) => v.visaStatus !== "Draft" && v.status !== "Draft");
 
   const tableHeaderStyle = { padding: "15px 12px", textAlign: "left" as const, fontWeight: "bold", borderRight: "1px solid #d1d5db", borderBottom: "2px solid #1a1f36", verticalAlign: "bottom" as const };
   const tableCellStyle = { padding: "15px 12px", borderRight: "1px solid #d1d5db", verticalAlign: "top" as const };

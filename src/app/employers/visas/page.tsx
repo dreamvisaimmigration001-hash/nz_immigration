@@ -12,6 +12,9 @@ export default function VisasManagementPage() {
   const [visas, setVisas] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const token = (session as any)?.apiToken;
+
   // Search & Pagination & Filtering
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -39,15 +42,21 @@ export default function VisasManagementPage() {
   const [editStatus, setEditStatus] = useState("Draft");
 
   const fetchVisas = async () => {
-    const res = await fetch("/api/visas");
+    if (!token) return;
+    const res = await fetch(`${API_URL}/api/visas`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     const data = await res.json();
-    if (res.ok) setVisas(data.visas);
+    if (res.ok) setVisas(data.visas || []);
   };
 
   const fetchUsers = async () => {
-    const res = await fetch("/api/users");
+    if (!token) return;
+    const res = await fetch(`${API_URL}/api/auth/users`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     const data = await res.json();
-    if (res.ok) setUsers(data.users);
+    if (res.ok) setUsers(data || []);
   };
 
   useEffect(() => {
@@ -68,13 +77,16 @@ export default function VisasManagementPage() {
 
   const handleCreateVisa = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/visas", {
+    const res = await fetch(`${API_URL}/api/visas`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
       body: JSON.stringify({
-        userid: newUserId === "" ? undefined : newUserId,
+        userId: newUserId === "" ? undefined : newUserId,
         fullName: newFullName,
-        passportNumber: newPassportNumber,
+        documentNumber: newPassportNumber,
         nationality: newNationality,
         dateOfBirth: newDateOfBirth,
         visaType: newVisaType,
@@ -98,9 +110,9 @@ export default function VisasManagementPage() {
 
   const startEdit = (visa: any) => {
     setEditVisaId(visa._id);
-    setEditUserId(visa.userid ? visa.userid._id : "");
+    setEditUserId(visa.userId ? (visa.userId._id || visa.userId) : "");
     setEditFullName(visa.fullName || "");
-    setEditPassportNumber(visa.passportNumber || "");
+    setEditPassportNumber(visa.documentNumber || visa.passportNumber || "");
     setEditNationality(visa.nationality || "");
     setEditDateOfBirth(visa.dateOfBirth ? new Date(visa.dateOfBirth).toISOString().split('T')[0] : "");
     setEditVisaType(visa.visaType || "Visitor Visa");
@@ -109,14 +121,16 @@ export default function VisasManagementPage() {
 
   const handleEditVisa = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/visas", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+    const res = await fetch(`${API_URL}/api/visas/${editVisaId}`, {
+      method: "PATCH",
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
       body: JSON.stringify({
-        visaId: editVisaId,
-        userid: editUserId === "" ? null : editUserId,
+        userId: editUserId === "" ? null : editUserId,
         fullName: editFullName,
-        passportNumber: editPassportNumber,
+        documentNumber: editPassportNumber,
         nationality: editNationality,
         dateOfBirth: editDateOfBirth,
         visaType: editVisaType,
@@ -133,16 +147,19 @@ export default function VisasManagementPage() {
 
   const handleDeleteVisa = async (visaId: string) => {
     if (!confirm("Are you sure?")) return;
-    const res = await fetch(`/api/visas?id=${visaId}`, { method: "DELETE" });
+    const res = await fetch(`${API_URL}/api/visas/${visaId}`, { 
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
     if (res.ok) fetchVisas();
     else alert("Error deleting visa");
   };
 
   const filteredVisas = useMemo(() => {
     return visas.filter(v => {
-      const matchesSearch = (v.userid?.username || "").toLowerCase().includes(search.toLowerCase()) || 
+      const matchesSearch = (v.userId?.username || "").toLowerCase().includes(search.toLowerCase()) || 
                             (v.fullName || "").toLowerCase().includes(search.toLowerCase()) ||
-                            (v.passportNumber || "").toLowerCase().includes(search.toLowerCase());
+                            (v.documentNumber || v.passportNumber || "").toLowerCase().includes(search.toLowerCase());
       const matchesStatus = statusFilter === "All" || v.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
@@ -231,10 +248,10 @@ export default function VisasManagementPage() {
                   <tr key={visa._id} style={{ borderBottom: "1px solid #eaeaea", transition: "background 0.2s" }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f9fafb")} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}>
                     <td style={{ padding: "20px 30px", fontSize: "15px", color: "#111827", fontWeight: "500" }}>
                       <div>{visa.fullName || <span style={{ color: "#9ca3af", fontStyle: "italic" }}>No Name</span>}</div>
-                      <div style={{ fontSize: "12px", color: "#6b7280" }}>User: {visa.userid ? visa.userid.username : "Unassigned"}</div>
+                      <div style={{ fontSize: "12px", color: "#6b7280" }}>User: {visa.userId ? (visa.userId.username || "Assigned") : "Unassigned"}</div>
                     </td>
                     <td style={{ padding: "20px 30px", fontSize: "14px", color: "#4b5563" }}>{visa.visaType || "-"}</td>
-                    <td style={{ padding: "20px 30px", fontSize: "14px", color: "#4b5563" }}>{visa.passportNumber || "-"}</td>
+                    <td style={{ padding: "20px 30px", fontSize: "14px", color: "#4b5563" }}>{visa.documentNumber || visa.passportNumber || "-"}</td>
                     <td style={{ padding: "20px 30px" }}>{getStatusBadge(visa.status)}</td>
                     <td style={{ padding: "20px 30px" }}>
                       <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", alignItems: "center", flexWrap: "nowrap" }}>
