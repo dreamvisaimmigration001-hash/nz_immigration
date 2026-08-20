@@ -63,7 +63,7 @@ export default function LoginPage() {
       }}
       className="flex flex-col"
     >
-      <div id="app" className="flex-grow flex flex-col">
+      <div id="app" className="grow flex flex-col">
         <div id="header">
           {/* Black Header */}
           <header style={{ backgroundColor: "#000", padding: "18px 0", width: "100%" }}>
