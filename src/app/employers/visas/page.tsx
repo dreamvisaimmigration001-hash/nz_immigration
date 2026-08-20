@@ -43,20 +43,28 @@ export default function VisasManagementPage() {
 
   const fetchVisas = async () => {
     if (!token) return;
-    const res = await fetch(`${API_URL}/api/visas`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    if (res.ok) setVisas(data.visas || []);
+    try {
+      const res = await fetch(`${API_URL}/api/visas`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) setVisas(data.visas || []);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const fetchUsers = async () => {
     if (!token) return;
-    const res = await fetch(`${API_URL}/api/auth/users`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    if (res.ok) setUsers(data || []);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) setUsers(data || []);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -146,7 +154,7 @@ export default function VisasManagementPage() {
   };
 
   const handleDeleteVisa = async (visaId: string) => {
-    if (!confirm("Are you sure?")) return;
+    if (!confirm("Are you sure you want to delete this visa record?")) return;
     const res = await fetch(`${API_URL}/api/visas/${visaId}`, { 
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
@@ -174,45 +182,76 @@ export default function VisasManagementPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "Approved": return <span style={{ backgroundColor: "#d1fae5", color: "#065f46", padding: "4px 8px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold" }}>Approved</span>;
-      case "Declined": return <span style={{ backgroundColor: "#fee2e2", color: "#991b1b", padding: "4px 8px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold" }}>Declined</span>;
+      case "Approved": 
+        return <span style={{ backgroundColor: "#d1fae5", color: "#065f46", padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "600", border: "1px solid #a7f3d0" }}>Approved</span>;
+      case "Declined": 
+        return <span style={{ backgroundColor: "#fee2e2", color: "#991b1b", padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "600", border: "1px solid #fca5a5" }}>Declined</span>;
       case "Submitted": 
       case "Under Assessment":
-      case "Pending": return <span style={{ backgroundColor: "#fef3c7", color: "#92400e", padding: "4px 8px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold" }}>{status}</span>;
-      default: return <span style={{ backgroundColor: "#f3f4f6", color: "#374151", padding: "4px 8px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold" }}>{status}</span>;
+      case "Pending": 
+        return <span style={{ backgroundColor: "#fef3c7", color: "#92400e", padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "600", border: "1px solid #fde68a" }}>{status}</span>;
+      default: 
+        return <span style={{ backgroundColor: "#f3f4f6", color: "#4b5563", padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "600", border: "1px solid #e5e7eb" }}>{status || "Draft"}</span>;
     }
   };
 
-  if (sessionStatus !== "authenticated") return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>Loading...</div>;
+  if (sessionStatus !== "authenticated") {
+    return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh", color: "#6b7280" }}>Loading visa management console...</div>;
+  }
 
   return (
-    <div style={{ backgroundColor: "#f4f7f6", minHeight: "100vh", padding: "40px 20px", fontFamily: "'Inter', sans-serif" }}>
-      <div style={{ maxWidth: "1200px", margin: "0 auto", backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)", overflow: "hidden" }}>
+    <div style={{ backgroundColor: "#ffffff", minHeight: "100vh", padding: "35px 20px 60px", fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
         
-        {/* Header Section */}
-        <div style={{ padding: "30px", borderBottom: "1px solid #eaeaea", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#1E222C", color: "#fff" }}>
+        {/* Page Header Bar */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", borderBottom: "1px solid #e5e7eb", paddingBottom: "20px", marginBottom: "28px" }}>
           <div>
-            <Link href="/employers" style={{ color: "#d54309", textDecoration: "none", fontSize: "14px", fontWeight: "bold", display: "inline-block", marginBottom: "10px" }}>
-              &larr; Back to Dashboard
-            </Link>
-            <h1 style={{ fontSize: "28px", margin: 0 }}>Manage Visas</h1>
+            <h1 style={{ fontSize: "32px", color: "#1E222C", margin: "0 0 6px 0", fontWeight: "400", letterSpacing: "-0.5px" }}>
+              Manage Visas
+            </h1>
+            <p style={{ margin: 0, color: "#6b7280", fontSize: "14px" }}>
+              Review, assign, and update applicant visa records and status assessments.
+            </p>
           </div>
-          <button onClick={() => setIsCreateModalOpen(true)} style={{ backgroundColor: "#d54309", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "6px", fontWeight: "bold", cursor: "pointer", transition: "background 0.2s" }}>
-            + Create Visa
+          <button 
+            onClick={() => setIsCreateModalOpen(true)} 
+            style={{ 
+              backgroundColor: "#c60c46", 
+              color: "#ffffff", 
+              border: "none", 
+              padding: "10px 20px", 
+              borderRadius: "3px", 
+              fontWeight: "600", 
+              fontSize: "13px",
+              cursor: "pointer", 
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              boxShadow: "0 2px 4px rgba(198, 12, 70, 0.15)",
+              transition: "all 0.15s ease" 
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#a8093b")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#c60c46")}
+          >
+            <span>+</span> Create Visa
           </button>
         </div>
 
-        {/* Toolbar (Search & Filter) */}
-        <div style={{ padding: "20px 30px", backgroundColor: "#fafbfc", borderBottom: "1px solid #eaeaea", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "20px" }}>
-          <div style={{ display: "flex", gap: "15px" }}>
+        {/* Toolbar & Search Controls */}
+        <div style={{ backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: "4px", padding: "16px 20px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
             <input 
               type="text" 
-              placeholder="Search user, name or passport..." 
+              placeholder="Search name, user or passport..." 
               value={search}
               onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-              style={{ width: "250px", padding: "10px 15px", borderRadius: "6px", border: "1px solid #ccc", outline: "none", fontSize: "15px" }}
+              style={{ width: "260px", padding: "8px 12px", borderRadius: "3px", border: "1px solid #d1d5db", outline: "none", fontSize: "14px", color: "#1f2937", backgroundColor: "#fff" }}
             />
-            <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }} style={{ padding: "10px 15px", borderRadius: "6px", border: "1px solid #ccc", outline: "none", fontSize: "15px", backgroundColor: "#fff" }}>
+            <select 
+              value={statusFilter} 
+              onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }} 
+              style={{ padding: "8px 12px", borderRadius: "3px", border: "1px solid #d1d5db", outline: "none", fontSize: "14px", color: "#1f2937", backgroundColor: "#fff", cursor: "pointer" }}
+            >
               <option value="All">All Statuses</option>
               <option value="Draft">Draft</option>
               <option value="Submitted">Submitted</option>
@@ -221,98 +260,145 @@ export default function VisasManagementPage() {
               <option value="Declined">Declined</option>
             </select>
           </div>
-          <div style={{ fontSize: "14px", color: "#666", alignSelf: "center" }}>
-            Total Visas: <strong>{filteredVisas.length}</strong>
+          <div style={{ fontSize: "13px", color: "#6b7280" }}>
+            Showing <strong>{filteredVisas.length}</strong> visa application records
           </div>
         </div>
 
-        {/* Data Table */}
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-            <thead>
-              <tr style={{ backgroundColor: "#f9fafb", color: "#6b7280", borderBottom: "1px solid #eaeaea" }}>
-                <th style={{ padding: "16px 30px", fontWeight: "600", fontSize: "14px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Applicant</th>
-                <th style={{ padding: "16px 30px", fontWeight: "600", fontSize: "14px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Visa Type</th>
-                <th style={{ padding: "16px 30px", fontWeight: "600", fontSize: "14px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Passport</th>
-                <th style={{ padding: "16px 30px", fontWeight: "600", fontSize: "14px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Status</th>
-                <th style={{ padding: "16px 30px", fontWeight: "600", fontSize: "14px", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "right" }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedVisas.length === 0 ? (
-                <tr>
-                  <td colSpan={5} style={{ padding: "40px", textAlign: "center", color: "#9ca3af" }}>No visas found.</td>
+        {/* Data Table Container */}
+        <div style={{ border: "1px solid #e5e7eb", borderRadius: "4px", overflow: "hidden", backgroundColor: "#ffffff" }}>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+              <thead>
+                <tr style={{ backgroundColor: "#f9fafb", borderBottom: "2px solid #e5e7eb" }}>
+                  <th style={{ padding: "14px 20px", fontWeight: "600", fontSize: "12px", textTransform: "uppercase", color: "#4b5563", letterSpacing: "0.5px" }}>Applicant Info</th>
+                  <th style={{ padding: "14px 20px", fontWeight: "600", fontSize: "12px", textTransform: "uppercase", color: "#4b5563", letterSpacing: "0.5px" }}>Visa Type</th>
+                  <th style={{ padding: "14px 20px", fontWeight: "600", fontSize: "12px", textTransform: "uppercase", color: "#4b5563", letterSpacing: "0.5px" }}>Passport</th>
+                  <th style={{ padding: "14px 20px", fontWeight: "600", fontSize: "12px", textTransform: "uppercase", color: "#4b5563", letterSpacing: "0.5px" }}>Status</th>
+                  <th style={{ padding: "14px 20px", fontWeight: "600", fontSize: "12px", textTransform: "uppercase", color: "#4b5563", letterSpacing: "0.5px", textAlign: "right" }}>Actions</th>
                 </tr>
-              ) : (
-                paginatedVisas.map(visa => (
-                  <tr key={visa._id} style={{ borderBottom: "1px solid #eaeaea", transition: "background 0.2s" }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f9fafb")} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}>
-                    <td style={{ padding: "20px 30px", fontSize: "15px", color: "#111827", fontWeight: "500" }}>
-                      <div>{visa.fullName || <span style={{ color: "#9ca3af", fontStyle: "italic" }}>No Name</span>}</div>
-                      <div style={{ fontSize: "12px", color: "#6b7280" }}>User: {visa.userId ? (visa.userId.username || "Assigned") : "Unassigned"}</div>
-                    </td>
-                    <td style={{ padding: "20px 30px", fontSize: "14px", color: "#4b5563" }}>{visa.visaType || "-"}</td>
-                    <td style={{ padding: "20px 30px", fontSize: "14px", color: "#4b5563" }}>{visa.documentNumber || visa.passportNumber || "-"}</td>
-                    <td style={{ padding: "20px 30px" }}>{getStatusBadge(visa.status)}</td>
-                    <td style={{ padding: "20px 30px" }}>
-                      <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", alignItems: "center", flexWrap: "nowrap" }}>
-                        <button onClick={() => startEdit(visa)} style={{ backgroundColor: "#1E222C", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "4px", fontSize: "13px", fontWeight: "bold", cursor: "pointer", whiteSpace: "nowrap" }}>Edit</button>
-                        <button onClick={() => handleDeleteVisa(visa._id)} style={{ backgroundColor: "#ef4444", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "4px", fontSize: "13px", fontWeight: "bold", cursor: "pointer", whiteSpace: "nowrap" }}>Delete</button>
-                      </div>
+              </thead>
+              <tbody>
+                {paginatedVisas.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ padding: "40px 20px", textAlign: "center", color: "#9ca3af", fontSize: "14px" }}>
+                      No visa records match your search query.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  paginatedVisas.map(visa => (
+                    <tr 
+                      key={visa._id} 
+                      style={{ borderBottom: "1px solid #e5e7eb", transition: "background 0.15s" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f9fafb")} 
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                    >
+                      <td style={{ padding: "16px 20px", fontSize: "14px", color: "#1E222C", fontWeight: "500" }}>
+                        <div>{visa.fullName || <span style={{ color: "#9ca3af", fontStyle: "italic" }}>Unspecified Name</span>}</div>
+                        <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "2px" }}>
+                          Account: {visa.userId ? (visa.userId.username || "Linked") : "Unassigned"}
+                        </div>
+                      </td>
+                      <td style={{ padding: "16px 20px", fontSize: "13px", color: "#374151" }}>
+                        {visa.visaType || "-"}
+                      </td>
+                      <td style={{ padding: "16px 20px", fontSize: "13px", color: "#374151", fontFamily: "monospace" }}>
+                        {visa.documentNumber || visa.passportNumber || "-"}
+                      </td>
+                      <td style={{ padding: "16px 20px" }}>
+                        {getStatusBadge(visa.status)}
+                      </td>
+                      <td style={{ padding: "16px 20px", textAlign: "right" }}>
+                        <div style={{ display: "inline-flex", gap: "8px", justifyContent: "flex-end" }}>
+                          <button 
+                            onClick={() => startEdit(visa)} 
+                            style={{ backgroundColor: "#1E222C", color: "#ffffff", border: "none", padding: "6px 14px", borderRadius: "3px", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteVisa(visa._id)} 
+                            style={{ backgroundColor: "#ffffff", color: "#c60c46", border: "1px solid #fca5a5", padding: "6px 14px", borderRadius: "3px", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div style={{ padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#f9fafb", borderTop: "1px solid #e5e7eb" }}>
+              <span style={{ fontSize: "13px", color: "#6b7280" }}>Page {currentPage} of {totalPages}</span>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button 
+                  disabled={currentPage === 1} 
+                  onClick={() => setCurrentPage(p => p - 1)} 
+                  style={{ padding: "6px 14px", border: "1px solid #d1d5db", backgroundColor: currentPage === 1 ? "#f3f4f6" : "#ffffff", color: currentPage === 1 ? "#9ca3af" : "#374151", borderRadius: "3px", fontSize: "13px", cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
+                >
+                  Previous
+                </button>
+                <button 
+                  disabled={currentPage === totalPages} 
+                  onClick={() => setCurrentPage(p => p + 1)} 
+                  style={{ padding: "6px 14px", border: "1px solid #d1d5db", backgroundColor: currentPage === totalPages ? "#f3f4f6" : "#ffffff", color: currentPage === totalPages ? "#9ca3af" : "#374151", borderRadius: "3px", fontSize: "13px", cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div style={{ padding: "20px 30px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #eaeaea" }}>
-            <span style={{ fontSize: "14px", color: "#6b7280" }}>Page {currentPage} of {totalPages}</span>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} style={{ padding: "8px 16px", border: "1px solid #d1d5db", backgroundColor: currentPage === 1 ? "#f3f4f6" : "#fff", color: currentPage === 1 ? "#9ca3af" : "#374151", borderRadius: "6px", cursor: currentPage === 1 ? "not-allowed" : "pointer" }}>Previous</button>
-              <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} style={{ padding: "8px 16px", border: "1px solid #d1d5db", backgroundColor: currentPage === totalPages ? "#f3f4f6" : "#fff", color: currentPage === totalPages ? "#9ca3af" : "#374151", borderRadius: "6px", cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}>Next</button>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Create Modal */}
+      {/* Modal: Create Visa */}
       {isCreateModalOpen && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 }}>
-          <div style={{ backgroundColor: "#fff", padding: "30px", borderRadius: "12px", width: "500px", boxShadow: "0 10px 25px rgba(0,0,0,0.1)", maxHeight: "90vh", overflowY: "auto" }}>
-            <h2 style={{ fontSize: "22px", marginBottom: "20px", color: "#111827" }}>Create New Visa</h2>
-            <form onSubmit={handleCreateVisa} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(2px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 }}>
+          <div style={{ backgroundColor: "#ffffff", padding: "28px 32px", borderRadius: "6px", width: "100%", maxWidth: "520px", boxShadow: "0 10px 25px rgba(0,0,0,0.15)", border: "1px solid #e5e7eb", maxHeight: "90vh", overflowY: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #f3f4f6", paddingBottom: "12px" }}>
+              <h2 style={{ fontSize: "20px", color: "#1E222C", margin: 0, fontWeight: "600" }}>Create Visa Application</h2>
+              <button onClick={() => setIsCreateModalOpen(false)} style={{ background: "none", border: "none", fontSize: "20px", color: "#9ca3af", cursor: "pointer" }}>&times;</button>
+            </div>
+
+            <form onSubmit={handleCreateVisa} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
-                <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Assign User</label>
-                <select value={newUserId} onChange={(e) => setNewUserId(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Assign to User Account</label>
+                <select value={newUserId} onChange={(e) => setNewUserId(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
                   <option value="">-- Unassigned --</option>
                   {users.map(u => <option key={u._id} value={u._id}>{u.username}</option>)}
                 </select>
               </div>
+
               <div>
-                <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Full Name</label>
-                <input type="text" value={newFullName} onChange={(e) => setNewFullName(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }} />
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Full Legal Name</label>
+                <input required type="text" placeholder="e.g. Johnathan Doe" value={newFullName} onChange={(e) => setNewFullName(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} />
               </div>
-              <div style={{ display: "flex", gap: "10px" }}>
+
+              <div style={{ display: "flex", gap: "12px" }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Passport Number</label>
-                  <input type="text" value={newPassportNumber} onChange={(e) => setNewPassportNumber(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }} />
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Passport Number</label>
+                  <input type="text" placeholder="Passport No." value={newPassportNumber} onChange={(e) => setNewPassportNumber(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Nationality</label>
-                  <input type="text" value={newNationality} onChange={(e) => setNewNationality(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }} />
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Nationality</label>
+                  <input type="text" placeholder="Country" value={newNationality} onChange={(e) => setNewNationality(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} />
                 </div>
               </div>
-              <div style={{ display: "flex", gap: "10px" }}>
+
+              <div style={{ display: "flex", gap: "12px" }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Date of Birth</label>
-                  <input type="date" value={newDateOfBirth} onChange={(e) => setNewDateOfBirth(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }} />
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Date of Birth</label>
+                  <input type="date" value={newDateOfBirth} onChange={(e) => setNewDateOfBirth(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Visa Type</label>
-                  <select value={newVisaType} onChange={(e) => setNewVisaType(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Visa Category</label>
+                  <select value={newVisaType} onChange={(e) => setNewVisaType(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
                     <option value="Visitor Visa">Visitor Visa</option>
                     <option value="Student Visa">Student Visa</option>
                     <option value="Accredited Employer Work Visa">Accredited Employer Work Visa</option>
@@ -320,9 +406,10 @@ export default function VisasManagementPage() {
                   </select>
                 </div>
               </div>
+
               <div>
-                <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Status</label>
-                <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Initial Status</label>
+                <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
                   <option value="Draft">Draft</option>
                   <option value="Submitted">Submitted</option>
                   <option value="Under Assessment">Under Assessment</option>
@@ -330,50 +417,58 @@ export default function VisasManagementPage() {
                   <option value="Declined">Declined</option>
                 </select>
               </div>
-              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-                <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ flex: 1, padding: "12px", backgroundColor: "#f3f4f6", color: "#374151", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>Cancel</button>
-                <button type="submit" style={{ flex: 1, padding: "12px", backgroundColor: "#d54309", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>Create Visa</button>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #f3f4f6" }}>
+                <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ flex: 1, padding: "10px", backgroundColor: "#f3f4f6", color: "#374151", border: "none", borderRadius: "3px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>Cancel</button>
+                <button type="submit" style={{ flex: 1, padding: "10px", backgroundColor: "#c60c46", color: "#ffffff", border: "none", borderRadius: "3px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>Create Visa Record</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Edit Modal */}
+      {/* Modal: Edit Visa */}
       {editVisaId && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 }}>
-          <div style={{ backgroundColor: "#fff", padding: "30px", borderRadius: "12px", width: "500px", boxShadow: "0 10px 25px rgba(0,0,0,0.1)", maxHeight: "90vh", overflowY: "auto" }}>
-            <h2 style={{ fontSize: "22px", marginBottom: "20px", color: "#111827" }}>Edit Visa</h2>
-            <form onSubmit={handleEditVisa} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(2px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 }}>
+          <div style={{ backgroundColor: "#ffffff", padding: "28px 32px", borderRadius: "6px", width: "100%", maxWidth: "520px", boxShadow: "0 10px 25px rgba(0,0,0,0.15)", border: "1px solid #e5e7eb", maxHeight: "90vh", overflowY: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #f3f4f6", paddingBottom: "12px" }}>
+              <h2 style={{ fontSize: "20px", color: "#1E222C", margin: 0, fontWeight: "600" }}>Edit Visa Record</h2>
+              <button onClick={() => setEditVisaId(null)} style={{ background: "none", border: "none", fontSize: "20px", color: "#9ca3af", cursor: "pointer" }}>&times;</button>
+            </div>
+
+            <form onSubmit={handleEditVisa} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <div>
-                <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Assign User</label>
-                <select value={editUserId} onChange={(e) => setEditUserId(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Assigned User Account</label>
+                <select value={editUserId} onChange={(e) => setEditUserId(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
                   <option value="">-- Unassigned --</option>
                   {users.map(u => <option key={u._id} value={u._id}>{u.username}</option>)}
                 </select>
               </div>
+
               <div>
-                <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Full Name</label>
-                <input type="text" value={editFullName} onChange={(e) => setEditFullName(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }} />
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Full Legal Name</label>
+                <input required type="text" value={editFullName} onChange={(e) => setEditFullName(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} />
               </div>
-              <div style={{ display: "flex", gap: "10px" }}>
+
+              <div style={{ display: "flex", gap: "12px" }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Passport Number</label>
-                  <input type="text" value={editPassportNumber} onChange={(e) => setEditPassportNumber(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }} />
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Passport Number</label>
+                  <input type="text" value={editPassportNumber} onChange={(e) => setEditPassportNumber(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Nationality</label>
-                  <input type="text" value={editNationality} onChange={(e) => setEditNationality(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }} />
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Nationality</label>
+                  <input type="text" value={editNationality} onChange={(e) => setEditNationality(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} />
                 </div>
               </div>
-              <div style={{ display: "flex", gap: "10px" }}>
+
+              <div style={{ display: "flex", gap: "12px" }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Date of Birth</label>
-                  <input type="date" value={editDateOfBirth} onChange={(e) => setEditDateOfBirth(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }} />
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Date of Birth</label>
+                  <input type="date" value={editDateOfBirth} onChange={(e) => setEditDateOfBirth(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Visa Type</label>
-                  <select value={editVisaType} onChange={(e) => setEditVisaType(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Visa Category</label>
+                  <select value={editVisaType} onChange={(e) => setEditVisaType(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
                     <option value="Visitor Visa">Visitor Visa</option>
                     <option value="Student Visa">Student Visa</option>
                     <option value="Accredited Employer Work Visa">Accredited Employer Work Visa</option>
@@ -381,9 +476,10 @@ export default function VisasManagementPage() {
                   </select>
                 </div>
               </div>
+
               <div>
-                <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", fontWeight: "bold" }}>Status</label>
-                <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #d1d5db", borderRadius: "6px", fontSize: "15px" }}>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Assessment Status</label>
+                <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
                   <option value="Draft">Draft</option>
                   <option value="Submitted">Submitted</option>
                   <option value="Under Assessment">Under Assessment</option>
@@ -391,14 +487,16 @@ export default function VisasManagementPage() {
                   <option value="Declined">Declined</option>
                 </select>
               </div>
-              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-                <button type="button" onClick={() => setEditVisaId(null)} style={{ flex: 1, padding: "12px", backgroundColor: "#f3f4f6", color: "#374151", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>Cancel</button>
-                <button type="submit" style={{ flex: 1, padding: "12px", backgroundColor: "#10b981", color: "#fff", border: "none", borderRadius: "6px", fontWeight: "bold", cursor: "pointer" }}>Save Changes</button>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #f3f4f6" }}>
+                <button type="button" onClick={() => setEditVisaId(null)} style={{ flex: 1, padding: "10px", backgroundColor: "#f3f4f6", color: "#374151", border: "none", borderRadius: "3px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>Cancel</button>
+                <button type="submit" style={{ flex: 1, padding: "10px", backgroundColor: "#10b981", color: "#ffffff", border: "none", borderRadius: "3px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>Save Changes</button>
               </div>
             </form>
           </div>
         </div>
       )}
+
     </div>
   );
 }

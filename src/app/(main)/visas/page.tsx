@@ -60,13 +60,6 @@ export default async function UserVisasPage() {
     <div style={{ backgroundColor: "#ffffff", minHeight: "100vh", padding: "40px 20px", fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div style={{ maxWidth: "1050px", margin: "0 auto" }}>
         
-        {/* Breadcrumb */}
-        <div style={{ marginBottom: "20px", color: "#0062a4", fontSize: "14px" }}>
-          <Link href="/dashboard" style={{ color: "#0062a4", textDecoration: "none" }}>My dashboard</Link>
-          <span style={{ margin: "0 8px", color: "#9ca3af" }}>&gt;</span>
-          <span style={{ color: "#6b7280" }}>My visas</span>
-        </div>
-
         {/* Title */}
         <div style={{ marginBottom: "35px", borderBottom: "1px solid #e5e7eb", paddingBottom: "20px" }}>
           <h1 style={{ fontSize: "40px", color: "#6b7280", margin: "0", fontWeight: "300", letterSpacing: "-0.5px" }}>

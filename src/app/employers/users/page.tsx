@@ -27,11 +27,15 @@ export default function UsersManagementPage() {
 
   const fetchUsers = async () => {
     if (!token) return;
-    const res = await fetch(`${API_URL}/api/auth/users`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    if (res.ok) setUsers(data || []);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) setUsers(data || []);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -49,7 +53,7 @@ export default function UsersManagementPage() {
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) =>
-      u.username.toLowerCase().includes(search.toLowerCase()),
+      (u.username || "").toLowerCase().includes(search.toLowerCase())
     );
   }, [users, search]);
 
@@ -93,17 +97,14 @@ export default function UsersManagementPage() {
     if (res.ok) {
       setEditUserId(null);
       setEditPassword("");
-      alert("Password updated");
+      alert("Password updated successfully.");
     } else {
       alert("Error updating password");
     }
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (
-      !confirm("Are you sure? This will delete the user and all their visas.")
-    )
-      return;
+    if (!confirm("Are you sure you want to delete this user and all associated visa records?")) return;
     const res = await fetch(`${API_URL}/api/auth/users/${userId}`, { 
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
@@ -112,94 +113,50 @@ export default function UsersManagementPage() {
     else alert("Error deleting user");
   };
 
-  if (status !== "authenticated")
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        Loading...
-      </div>
-    );
+  if (status !== "authenticated") {
+    return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh", color: "#6b7280" }}>Loading user accounts...</div>;
+  }
 
   return (
-    <div
-      style={{
-        backgroundColor: "#f4f7f6",
-        minHeight: "100vh",
-        padding: "40px 20px",
-        fontFamily: "'Inter', sans-serif",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          backgroundColor: "#fff",
-          borderRadius: "12px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-          overflow: "hidden",
-        }}
-      >
-        {/* Header Section */}
-        <div
-          style={{
-            padding: "30px",
-            borderBottom: "1px solid #eaeaea",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            backgroundColor: "#1E222C",
-            color: "#fff",
-          }}
-        >
+    <div style={{ backgroundColor: "#ffffff", minHeight: "100vh", padding: "35px 20px 60px", fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+        
+        {/* Page Header Bar */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", borderBottom: "1px solid #e5e7eb", paddingBottom: "20px", marginBottom: "28px" }}>
           <div>
-            <Link
-              href="/employers"
-              style={{
-                color: "#d54309",
-                textDecoration: "none",
-                fontSize: "14px",
-                fontWeight: "bold",
-                display: "inline-block",
-                marginBottom: "10px",
-              }}
-            >
-              &larr; Back to Dashboard
-            </Link>
-            <h1 style={{ fontSize: "28px", margin: 0 }}>Manage Users</h1>
+            <h1 style={{ fontSize: "32px", color: "#1E222C", margin: "0 0 6px 0", fontWeight: "400", letterSpacing: "-0.5px" }}>
+              Manage Users
+            </h1>
+            <p style={{ margin: 0, color: "#6b7280", fontSize: "14px" }}>
+              Create applicant accounts, manage user access, and update login credentials.
+            </p>
           </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
             style={{
-              backgroundColor: "#d54309",
-              color: "#fff",
+              backgroundColor: "#c60c46",
+              color: "#ffffff",
               border: "none",
-              padding: "12px 24px",
-              borderRadius: "6px",
-              fontWeight: "bold",
+              padding: "10px 20px",
+              borderRadius: "3px",
+              fontWeight: "600",
+              fontSize: "13px",
               cursor: "pointer",
-              transition: "background 0.2s",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              boxShadow: "0 2px 4px rgba(198, 12, 70, 0.15)",
+              transition: "all 0.15s ease",
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#a8093b")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#c60c46")}
           >
-            + Create User
+            <span>+</span> Create User
           </button>
         </div>
 
-        {/* Toolbar (Search) */}
-        <div
-          style={{
-            padding: "20px 30px",
-            backgroundColor: "#fafbfc",
-            borderBottom: "1px solid #eaeaea",
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
+        {/* Toolbar & Search Controls */}
+        <div style={{ backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: "4px", padding: "16px 20px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
           <input
             type="text"
             placeholder="Search by username..."
@@ -208,295 +165,140 @@ export default function UsersManagementPage() {
               setSearch(e.target.value);
               setCurrentPage(1);
             }}
-            style={{
-              width: "300px",
-              padding: "10px 15px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              outline: "none",
-              fontSize: "15px",
-            }}
+            style={{ width: "280px", padding: "8px 12px", borderRadius: "3px", border: "1px solid #d1d5db", outline: "none", fontSize: "14px", color: "#1f2937", backgroundColor: "#fff" }}
           />
-          <div style={{ fontSize: "14px", color: "#666", alignSelf: "center" }}>
-            Total Users: <strong>{filteredUsers.length}</strong>
+          <div style={{ fontSize: "13px", color: "#6b7280" }}>
+            Total User Accounts: <strong>{filteredUsers.length}</strong>
           </div>
         </div>
 
-        {/* Data Table */}
-        <div style={{ overflowX: "auto" }}>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              textAlign: "left",
-            }}
-          >
-            <thead>
-              <tr
-                style={{
-                  backgroundColor: "#f9fafb",
-                  color: "#6b7280",
-                  borderBottom: "1px solid #eaeaea",
-                }}
-              >
-                <th
-                  style={{
-                    padding: "16px 30px",
-                    fontWeight: "600",
-                    fontSize: "14px",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  Username
-                </th>
-                <th
-                  style={{
-                    padding: "16px 30px",
-                    fontWeight: "600",
-                    fontSize: "14px",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                    textAlign: "right",
-                  }}
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedUsers.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={2}
-                    style={{
-                      padding: "40px",
-                      textAlign: "center",
-                      color: "#9ca3af",
-                    }}
-                  >
-                    No users found.
-                  </td>
+        {/* Data Table Container */}
+        <div style={{ border: "1px solid #e5e7eb", borderRadius: "4px", overflow: "hidden", backgroundColor: "#ffffff" }}>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+              <thead>
+                <tr style={{ backgroundColor: "#f9fafb", borderBottom: "2px solid #e5e7eb" }}>
+                  <th style={{ padding: "14px 20px", fontWeight: "600", fontSize: "12px", textTransform: "uppercase", color: "#4b5563", letterSpacing: "0.5px" }}>User Account</th>
+                  <th style={{ padding: "14px 20px", fontWeight: "600", fontSize: "12px", textTransform: "uppercase", color: "#4b5563", letterSpacing: "0.5px", textAlign: "right" }}>Actions</th>
                 </tr>
-              ) : (
-                paginatedUsers.map((user) => (
-                  <tr
-                    key={user._id}
-                    style={{
-                      borderBottom: "1px solid #eaeaea",
-                      transition: "background 0.2s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#f9fafb")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = "transparent")
-                    }
-                  >
-                    <td
-                      style={{
-                        padding: "20px 30px",
-                        fontSize: "15px",
-                        color: "#111827",
-                        fontWeight: "500",
-                      }}
-                    >
-                      {user.username}
-                    </td>
-                    <td style={{ padding: "20px 30px" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "10px",
-                          justifyContent: "flex-end",
-                          alignItems: "center",
-                          flexWrap: "nowrap",
-                        }}
-                      >
-                        <button
-                          onClick={() => setEditUserId(user._id)}
-                          style={{
-                            backgroundColor: "#1E222C",
-                            color: "#fff",
-                            border: "none",
-                            padding: "8px 16px",
-                            borderRadius: "4px",
-                            fontSize: "13px",
-                            fontWeight: "bold",
-                            cursor: "pointer",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Change Password
-                        </button>
-                        <button
-                          onClick={() => handleDeleteUser(user._id)}
-                          style={{
-                            backgroundColor: "#ef4444",
-                            color: "#fff",
-                            border: "none",
-                            padding: "8px 16px",
-                            borderRadius: "4px",
-                            fontSize: "13px",
-                            fontWeight: "bold",
-                            cursor: "pointer",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
+              </thead>
+              <tbody>
+                {paginatedUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan={2} style={{ padding: "40px 20px", textAlign: "center", color: "#9ca3af", fontSize: "14px" }}>
+                      No user accounts found.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  paginatedUsers.map((user) => (
+                    <tr
+                      key={user._id}
+                      style={{ borderBottom: "1px solid #e5e7eb", transition: "background 0.15s" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f9fafb")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                    >
+                      <td style={{ padding: "16px 20px", fontSize: "14px", color: "#1E222C", fontWeight: "500" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <span style={{ width: "32px", height: "32px", borderRadius: "50%", backgroundColor: "#e5e7eb", color: "#4b5563", display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: "600", fontSize: "13px" }}>
+                            {user.username ? user.username.charAt(0).toUpperCase() : "U"}
+                          </span>
+                          <span>{user.username}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: "16px 20px", textAlign: "right" }}>
+                        <div style={{ display: "inline-flex", gap: "8px", justifyContent: "flex-end" }}>
+                          <button
+                            onClick={() => setEditUserId(user._id)}
+                            style={{ backgroundColor: "#1E222C", color: "#ffffff", border: "none", padding: "6px 14px", borderRadius: "3px", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
+                          >
+                            Change Password
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(user._id)}
+                            style={{ backgroundColor: "#ffffff", color: "#c60c46", border: "1px solid #fca5a5", padding: "6px 14px", borderRadius: "3px", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div style={{ padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#f9fafb", borderTop: "1px solid #e5e7eb" }}>
+              <span style={{ fontSize: "13px", color: "#6b7280" }}>Page {currentPage} of {totalPages}</span>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  style={{ padding: "6px 14px", border: "1px solid #d1d5db", backgroundColor: currentPage === 1 ? "#f3f4f6" : "#ffffff", color: currentPage === 1 ? "#9ca3af" : "#374151", borderRadius: "3px", fontSize: "13px", cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
+                >
+                  Previous
+                </button>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  style={{ padding: "6px 14px", border: "1px solid #d1d5db", backgroundColor: currentPage === totalPages ? "#f3f4f6" : "#ffffff", color: currentPage === totalPages ? "#9ca3af" : "#374151", borderRadius: "3px", fontSize: "13px", cursor: currentPage === totalPages ? "not-allowed" : "pointer" }}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div
-            style={{
-              padding: "20px 30px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              borderTop: "1px solid #eaeaea",
-            }}
-          >
-            <span style={{ fontSize: "14px", color: "#6b7280" }}>
-              Page {currentPage} of {totalPages}
-            </span>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
-                style={{
-                  padding: "8px 16px",
-                  border: "1px solid #d1d5db",
-                  backgroundColor: currentPage === 1 ? "#f3f4f6" : "#fff",
-                  color: currentPage === 1 ? "#9ca3af" : "#374151",
-                  borderRadius: "6px",
-                  cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                }}
-              >
-                Previous
-              </button>
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => p + 1)}
-                style={{
-                  padding: "8px 16px",
-                  border: "1px solid #d1d5db",
-                  backgroundColor:
-                    currentPage === totalPages ? "#f3f4f6" : "#fff",
-                  color: currentPage === totalPages ? "#9ca3af" : "#374151",
-                  borderRadius: "6px",
-                  cursor:
-                    currentPage === totalPages ? "not-allowed" : "pointer",
-                }}
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Create Modal */}
+      {/* Modal: Create User */}
       {isCreateModalOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "30px",
-              borderRadius: "12px",
-              width: "400px",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "22px",
-                marginBottom: "20px",
-                color: "#111827",
-              }}
-            >
-              Create New User
-            </h2>
-            <form
-              onSubmit={handleCreateUser}
-              style={{ display: "flex", flexDirection: "column", gap: "15px" }}
-            >
-              <input
-                required
-                type="text"
-                placeholder="Username"
-                value={newUsername}
-                onChange={(e) => setNewUsername(e.target.value)}
-                style={{
-                  padding: "12px",
-                  border: "1px solid #d1d5db",
-                  borderRadius: "6px",
-                  fontSize: "15px",
-                }}
-              />
-              <input
-                required
-                type="password"
-                placeholder="Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                style={{
-                  padding: "12px",
-                  border: "1px solid #d1d5db",
-                  borderRadius: "6px",
-                  fontSize: "15px",
-                }}
-              />
-              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(2px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 }}>
+          <div style={{ backgroundColor: "#ffffff", padding: "28px 32px", borderRadius: "6px", width: "100%", maxWidth: "420px", boxShadow: "0 10px 25px rgba(0,0,0,0.15)", border: "1px solid #e5e7eb" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #f3f4f6", paddingBottom: "12px" }}>
+              <h2 style={{ fontSize: "20px", color: "#1E222C", margin: 0, fontWeight: "600" }}>Create New User</h2>
+              <button onClick={() => setIsCreateModalOpen(false)} style={{ background: "none", border: "none", fontSize: "20px", color: "#9ca3af", cursor: "pointer" }}>&times;</button>
+            </div>
+
+            <form onSubmit={handleCreateUser} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Username</label>
+                <input
+                  required
+                  type="text"
+                  placeholder="Enter username"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Password</label>
+                <input
+                  required
+                  type="password"
+                  placeholder="Enter initial password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "8px", paddingTop: "12px", borderTop: "1px solid #f3f4f6" }}>
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  style={{
-                    flex: 1,
-                    padding: "12px",
-                    backgroundColor: "#f3f4f6",
-                    color: "#374151",
-                    border: "none",
-                    borderRadius: "6px",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  style={{ flex: 1, padding: "10px", backgroundColor: "#f3f4f6", color: "#374151", border: "none", borderRadius: "3px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  style={{
-                    flex: 1,
-                    padding: "12px",
-                    backgroundColor: "#d54309",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  style={{ flex: 1, padding: "10px", backgroundColor: "#c60c46", color: "#ffffff", border: "none", borderRadius: "3px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
                 >
                   Create User
                 </button>
@@ -506,89 +308,42 @@ export default function UsersManagementPage() {
         </div>
       )}
 
-      {/* Edit Password Modal */}
+      {/* Modal: Change Password */}
       {editUserId && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "30px",
-              borderRadius: "12px",
-              width: "400px",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "22px",
-                marginBottom: "20px",
-                color: "#111827",
-              }}
-            >
-              Change Password
-            </h2>
-            <form
-              onSubmit={handleChangePassword}
-              style={{ display: "flex", flexDirection: "column", gap: "15px" }}
-            >
-              <input
-                required
-                type="password"
-                placeholder="New Password"
-                value={editPassword}
-                onChange={(e) => setEditPassword(e.target.value)}
-                style={{
-                  padding: "12px",
-                  border: "1px solid #d1d5db",
-                  borderRadius: "6px",
-                  fontSize: "15px",
-                }}
-              />
-              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(2px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 }}>
+          <div style={{ backgroundColor: "#ffffff", padding: "28px 32px", borderRadius: "6px", width: "100%", maxWidth: "420px", boxShadow: "0 10px 25px rgba(0,0,0,0.15)", border: "1px solid #e5e7eb" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #f3f4f6", paddingBottom: "12px" }}>
+              <h2 style={{ fontSize: "20px", color: "#1E222C", margin: 0, fontWeight: "600" }}>Change User Password</h2>
+              <button onClick={() => { setEditUserId(null); setEditPassword(""); }} style={{ background: "none", border: "none", fontSize: "20px", color: "#9ca3af", cursor: "pointer" }}>&times;</button>
+            </div>
+
+            <form onSubmit={handleChangePassword} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>New Password</label>
+                <input
+                  required
+                  type="password"
+                  placeholder="Enter new password"
+                  value={editPassword}
+                  onChange={(e) => setEditPassword(e.target.value)}
+                  style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "8px", paddingTop: "12px", borderTop: "1px solid #f3f4f6" }}>
                 <button
                   type="button"
                   onClick={() => {
                     setEditUserId(null);
                     setEditPassword("");
                   }}
-                  style={{
-                    flex: 1,
-                    padding: "12px",
-                    backgroundColor: "#f3f4f6",
-                    color: "#374151",
-                    border: "none",
-                    borderRadius: "6px",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  style={{ flex: 1, padding: "10px", backgroundColor: "#f3f4f6", color: "#374151", border: "none", borderRadius: "3px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  style={{
-                    flex: 1,
-                    padding: "12px",
-                    backgroundColor: "#10b981",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
+                  style={{ flex: 1, padding: "10px", backgroundColor: "#10b981", color: "#ffffff", border: "none", borderRadius: "3px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
                 >
                   Save Password
                 </button>
@@ -597,6 +352,7 @@ export default function UsersManagementPage() {
           </div>
         </div>
       )}
+
     </div>
   );
 }
