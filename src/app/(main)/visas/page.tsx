@@ -18,7 +18,7 @@ export default async function UserVisasPage() {
 
   let allData: any[] = [];
   try {
-    const res = await fetch(`${API_URL}/api/visas/user/${userId}`, {
+    const res = await fetch(`${API_URL}/api/visas/user/${userId}?origin=nz`, {
       headers: {
         Authorization: `Bearer ${token}`
       },

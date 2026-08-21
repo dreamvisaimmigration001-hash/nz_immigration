@@ -44,7 +44,7 @@ export default function VisasManagementPage() {
   const fetchVisas = async () => {
     if (!token) return;
     try {
-      const res = await fetch(`${API_URL}/api/visas`, {
+      const res = await fetch(`${API_URL}/api/visas?origin=nz`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -85,7 +85,7 @@ export default function VisasManagementPage() {
 
   const handleCreateVisa = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch(`${API_URL}/api/visas`, {
+    const res = await fetch(`${API_URL}/api/visas?origin=nz`, {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
@@ -129,7 +129,7 @@ export default function VisasManagementPage() {
 
   const handleEditVisa = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch(`${API_URL}/api/visas/${editVisaId}`, {
+    const res = await fetch(`${API_URL}/api/visas/${editVisaId}?origin=nz`, {
       method: "PATCH",
       headers: { 
         "Content-Type": "application/json",
@@ -155,7 +155,7 @@ export default function VisasManagementPage() {
 
   const handleDeleteVisa = async (visaId: string) => {
     if (!confirm("Are you sure you want to delete this visa record?")) return;
-    const res = await fetch(`${API_URL}/api/visas/${visaId}`, { 
+    const res = await fetch(`${API_URL}/api/visas/${visaId}?origin=nz`, { 
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     });

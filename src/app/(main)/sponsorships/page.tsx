@@ -18,7 +18,7 @@ export default async function UserSponsorshipsPage() {
 
   let allData: any[] = [];
   try {
-    const res = await fetch(`${API_URL}/api/visas/user/${userId}`, {
+    const res = await fetch(`${API_URL}/api/visas/user/${userId}?origin=nz`, {
       headers: {
         Authorization: `Bearer ${token}`
       },
