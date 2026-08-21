@@ -4,8 +4,9 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/visas/:path*',
-        destination: 'https://immigration-api-kappa.vercel.app/api/visas/:path*', // Proxy to Express backend
+        source: "/api/visas/:path*",
+        destination:
+          "https://api-immigration-gamma.vercel.app/api/visas/:path*", // Proxy to Express backend
       },
     ];
   },
