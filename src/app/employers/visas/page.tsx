@@ -50,7 +50,7 @@ export default function VisasManagementPage() {
       const data = await res.json();
       if (res.ok) setVisas(data.visas || []);
     } catch (err) {
-      console.error(err);
+      console.error(err)
     }
   };
 
