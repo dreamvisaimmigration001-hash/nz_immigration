@@ -21,9 +21,14 @@ export default function DashboardClient({
   const [copied, setCopied] = useState(false);
 
   const handleCopySharingId = () => {
-    navigator.clipboard.writeText(sharingId);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (typeof window !== "undefined" && navigator?.clipboard) {
+      navigator.clipboard.writeText(sharingId).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch((err) => {
+        console.error("Failed to copy sharing ID:", err);
+      });
+    }
   };
 
   const tableHeaderStyle = { 
@@ -65,34 +70,127 @@ export default function DashboardClient({
         </div>
 
         {/* Sharing ID Card */}
-        <div style={{ backgroundColor: "#f9fafb", border: "1px solid #d1d5db", borderLeft: "4px solid #0062a4", padding: "20px 24px", borderRadius: "2px", marginBottom: "50px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "8px" }}>
-            <div style={{ fontSize: "15px", color: "#1E222C" }}>
-              <strong>My sharing ID is:</strong>{" "}
-              <span style={{ fontFamily: "monospace", fontSize: "16px", fontWeight: "bold", color: "#0062a4", letterSpacing: "0.5px", padding: "3px 10px", backgroundColor: "#eff6ff", borderRadius: "4px", border: "1px solid #bfdbfe", marginLeft: "6px" }}>
-                {sharingId}
-              </span>
+        <div
+          style={{
+            backgroundColor: "#f9fafb",
+            border: "1px solid #e5e7eb",
+            borderRadius: "8px",
+            padding: "20px 24px",
+            marginBottom: "40px",
+            boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.02)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "16px",
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  fontSize: "11px",
+                  fontWeight: "700",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  color: "#6b7280",
+                  marginBottom: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#0062a4"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+                My Sharing ID
+              </div>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  padding: "5px 12px",
+                  gap: "12px",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                    fontSize: "15px",
+                    fontWeight: "600",
+                    color: "#111827",
+                    letterSpacing: "0.03em",
+                  }}
+                >
+                  {sharingId}
+                </span>
+                <button
+                  onClick={handleCopySharingId}
+                  title="Copy Sharing ID"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    backgroundColor: copied ? "#ecfdf5" : "#0062a4",
+                    color: copied ? "#047857" : "#ffffff",
+                    border: copied ? "1px solid #a7f3d0" : "1px solid #0062a4",
+                    padding: "5px 12px",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease-in-out",
+                  }}
+                >
+                  {copied ? (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                      </svg>
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-            <button
-              onClick={handleCopySharingId}
-              style={{
-                backgroundColor: copied ? "#059669" : "#0062a4",
-                color: "#ffffff",
-                border: "none",
-                padding: "8px 18px",
-                fontSize: "13px",
-                fontWeight: "bold",
-                borderRadius: "2px",
-                cursor: "pointer",
-                transition: "all 0.2s"
-              }}
-            >
-              {copied ? "COPIED ✓" : "COPY SHARING ID"}
-            </button>
+            <div style={{ maxWidth: "440px" }}>
+              <p
+                style={{
+                  margin: 0,
+                  color: "#6b7280",
+                  fontSize: "13px",
+                  lineHeight: "1.5",
+                }}
+              >
+                People will need to enter your sharing ID in their online application to give you access to an application or network, or to nominate you as a sponsor.
+              </p>
+            </div>
           </div>
-          <p style={{ margin: 0, color: "#6b7280", fontSize: "13px", lineHeight: "1.5" }}>
-            People will need to enter your sharing ID in their online application in order to give you access to an application or network, or to nominate you as a sponsor.
-          </p>
         </div>
 
         {/* Action Sections */}
