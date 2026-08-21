@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  
+
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -61,11 +61,12 @@ export default function LoginPage() {
         fontFamily: "'Arial', sans-serif",
         overflowX: "hidden",
       }}
+      className="flex flex-col"
     >
-      <div id="app">
+      <div id="app" className="grow flex flex-col">
         <div id="header">
           {/* Black Header */}
-          <header style={{ backgroundColor: "#000", padding: "15px 0", width: "100%" }}>
+          <header style={{ backgroundColor: "#000", padding: "18px 0", width: "100%" }}>
             <div
               style={{
                 maxWidth: "1024px",
@@ -81,16 +82,16 @@ export default function LoginPage() {
               <Image
                 src="/realme-header-logo-white.png"
                 alt="RealMe"
-                width={300}
-                height={150}
-                style={{ height: "auto", width: "100%", maxWidth: "150px" }}
+                width={400}
+                height={200}
+                style={{ height: "auto", width: "100%", maxWidth: "260px" }}
               />
               <Image
                 src="/agency-branding.png"
                 alt="New Zealand Immigration"
-                width={200}
-                height={100}
-                style={{ height: "auto", width: "100%", maxWidth: "120px" }}
+                width={300}
+                height={150}
+                style={{ height: "auto", width: "100%", maxWidth: "240px" }}
               />
             </div>
           </header>
@@ -158,35 +159,31 @@ export default function LoginPage() {
               }}
             >
               <p style={{ margin: 0, fontSize: "14px", lineHeight: "1.5" }}>
-                We are performing maintenance on the RealMe service on Augst 2,
-                2026 from 7:00 am to 6:00 pm
-                <br />
-                NZT. You may experience some degradation of service during this
-                time. Please try again later.
+                We are performing maintenance on the RealMe service from 8:00 pm to 10:00 pm NZT. You may experience some degradation of service during this time. Please try again later.
               </p>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div style={{ padding: "60px 0", backgroundColor: "#fff" }}>
+        <div style={{ padding: "60px 0", backgroundColor: "#fff" }} className="flex-grow">
           <div
             style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 20px" }}
           >
             {/* Desktop View */}
-            <div className="hidden md:flex flex-nowrap bg-white">
+            <div className="hidden md:flex flex-nowrap bg-white relative">
               {/* Left Side: Login */}
               <div
                 style={{
-                  flex: "1 1 45%",
-                  paddingRight: "60px",
+                  flex: "1 1 50%",
+                  paddingRight: "50px",
                   borderRight: "1px solid #ddd",
                   boxSizing: "border-box",
                 }}
               >
                 <h2
                   style={{
-                    fontSize: "32px",
+                    fontSize: "36px",
                     fontWeight: "normal",
                     color: primaryOrange,
                     marginBottom: "20px",
@@ -197,14 +194,14 @@ export default function LoginPage() {
                 <p
                   style={{
                     color: "#333",
-                    marginBottom: "40px",
+                    marginBottom: "30px",
                     fontSize: "16px",
                   }}
                 >
                   You&apos;ve been redirected here so you can log in with RealMe
                 </p>
 
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleLogin} style={{ maxWidth: "420px" }}>
                   {error && <p style={{ color: "red", marginBottom: "15px" }}>{error}</p>}
                   <div style={{ marginBottom: "20px" }}>
                     <input
@@ -217,14 +214,15 @@ export default function LoginPage() {
                         width: "100%",
                         padding: "15px 20px",
                         border: "1px solid #ccc",
-                        borderRadius: "8px",
+                        borderRadius: "16px",
                         fontSize: "16px",
                         backgroundColor: inputGray,
                         color: "#333",
+                        outline: "none",
                       }}
                     />
                   </div>
-                  <div style={{ marginBottom: "30px" }}>
+                  <div style={{ marginBottom: "25px" }}>
                     <input
                       type="password"
                       placeholder="Password"
@@ -235,10 +233,11 @@ export default function LoginPage() {
                         width: "100%",
                         padding: "15px 20px",
                         border: "1px solid #ccc",
-                        borderRadius: "8px",
+                        borderRadius: "16px",
                         fontSize: "16px",
                         backgroundColor: inputGray,
                         color: "#333",
+                        outline: "none",
                       }}
                     />
                   </div>
@@ -250,25 +249,39 @@ export default function LoginPage() {
                         backgroundColor: primaryOrange,
                         color: "white",
                         border: "none",
-                        padding: "15px 30px",
-                        fontSize: "18px",
+                        padding: "14px 28px",
+                        fontSize: "16px",
                         fontWeight: "bold",
-                        borderRadius: "8px",
+                        borderRadius: "16px",
                         cursor: isLoading ? "not-allowed" : "pointer",
                         display: "inline-flex",
                         alignItems: "center",
                       }}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="white"
-                        style={{ marginRight: "10px" }}
-                      >
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                      </svg>
+                      <span style={{
+                        width: "26px",
+                        height: "26px",
+                        borderRadius: "50%",
+                        backgroundColor: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: "10px"
+                      }}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke={primaryOrange}
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </span>
                       {isLoading ? "Logging in..." : "Log in"}
                     </button>
                   </div>
@@ -278,7 +291,7 @@ export default function LoginPage() {
                   <span style={{ color: primaryOrange, cursor: "pointer" }}>
                     Forgot Username
                   </span>
-                  <span style={{ margin: "0 5px", color: "#333" }}>or</span>
+                  <span style={{ margin: "0 5px", color: "#333", fontWeight: "normal" }}>or</span>
                   <span style={{ color: primaryOrange, cursor: "pointer" }}>
                     Forgot Password?
                   </span>
@@ -288,14 +301,14 @@ export default function LoginPage() {
               {/* Right Side: Create Login */}
               <div
                 style={{
-                  flex: "1 1 45%",
-                  paddingLeft: "60px",
+                  flex: "1 1 50%",
+                  paddingLeft: "50px",
                   boxSizing: "border-box",
                 }}
               >
                 <h2
                   style={{
-                    fontSize: "32px",
+                    fontSize: "36px",
                     fontWeight: "normal",
                     color: primaryOrange,
                     marginBottom: "20px",
@@ -315,9 +328,10 @@ export default function LoginPage() {
                 <p
                   style={{
                     color: "#333",
-                    marginBottom: "40px",
+                    marginBottom: "35px",
                     lineHeight: "1.5",
                     fontSize: "16px",
+                    maxWidth: "420px",
                   }}
                 >
                   You&apos;ll be able to access a range of services with a single
@@ -332,31 +346,39 @@ export default function LoginPage() {
                       backgroundColor: primaryOrange,
                       color: "white",
                       border: "none",
-                      padding: "15px 30px",
-                      fontSize: "18px",
+                      padding: "14px 28px",
+                      fontSize: "16px",
                       fontWeight: "bold",
-                      borderRadius: "8px",
+                      borderRadius: "16px",
                       cursor: "pointer",
                       display: "inline-flex",
                       alignItems: "center",
                     }}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="white"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      style={{ marginRight: "10px" }}
-                    >
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 16 16 12 12 8"></polyline>
-                      <line x1="8" y1="12" x2="16" y2="12"></line>
-                    </svg>
+                    <span style={{
+                      width: "26px",
+                      height: "26px",
+                      borderRadius: "50%",
+                      backgroundColor: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginRight: "10px"
+                    }}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke={primaryOrange}
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </span>
                     Create a RealMe login
                   </button>
                 </div>
@@ -456,7 +478,7 @@ export default function LoginPage() {
                           width: "100%",
                           padding: "15px 20px",
                           border: "1px solid #ccc",
-                          borderRadius: "8px",
+                          borderRadius: "16px",
                           fontSize: "16px",
                           backgroundColor: inputGray,
                           color: "#333",
@@ -474,7 +496,7 @@ export default function LoginPage() {
                           width: "100%",
                           padding: "15px 20px",
                           border: "1px solid #ccc",
-                          borderRadius: "8px",
+                          borderRadius: "16px",
                           fontSize: "16px",
                           backgroundColor: inputGray,
                           color: "#333",
@@ -492,23 +514,38 @@ export default function LoginPage() {
                           padding: "15px 30px",
                           fontSize: "18px",
                           fontWeight: "bold",
-                          borderRadius: "8px",
+                          borderRadius: "16px",
                           cursor: isLoading ? "not-allowed" : "pointer",
                           display: "inline-flex",
                           alignItems: "center",
                           justifyContent: "center",
+                          width: "100%",
                         }}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="white"
-                          style={{ marginRight: "10px" }}
-                        >
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                        </svg>
+                        <span style={{
+                          width: "26px",
+                          height: "26px",
+                          borderRadius: "50%",
+                          backgroundColor: "white",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginRight: "10px"
+                        }}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke={primaryOrange}
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </span>
                         {isLoading ? "Logging in..." : "Log in"}
                       </button>
                     </div>
@@ -517,7 +554,7 @@ export default function LoginPage() {
                     <span style={{ color: primaryOrange, cursor: "pointer" }}>
                       Forgot Username
                     </span>
-                    <span style={{ margin: "0 5px", color: "#333" }}>or</span>
+                    <span style={{ margin: "0 5px", color: "#333", fontWeight: "normal" }}>or</span>
                     <span style={{ color: primaryOrange, cursor: "pointer" }}>
                       Forgot Password?
                     </span>
@@ -547,29 +584,38 @@ export default function LoginPage() {
                       padding: "15px 30px",
                       fontSize: "18px",
                       fontWeight: "bold",
-                      borderRadius: "8px",
+                      borderRadius: "16px",
                       cursor: "pointer",
                       display: "inline-flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      width: "100%",
                     }}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="white"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      style={{ marginRight: "10px" }}
-                    >
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 16 16 12 12 8"></polyline>
-                      <line x1="8" y1="12" x2="16" y2="12"></line>
-                    </svg>
+                    <span style={{
+                      width: "26px",
+                      height: "26px",
+                      borderRadius: "50%",
+                      backgroundColor: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginRight: "10px"
+                    }}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke={primaryOrange}
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </span>
                     Create a RealMe login
                   </button>
                 </div>
@@ -704,7 +750,7 @@ export default function LoginPage() {
             <h3
               style={{
                 fontSize: "24px",
-                color: "#d54309",
+                color: primaryOrange,
                 marginBottom: "15px",
                 fontWeight: "normal",
               }}

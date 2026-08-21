@@ -3647,8 +3647,8 @@ fieldset {
 .header__logo-mobile {
   fill: var(--color-darkest-blue);
   display: block;
-  height: 4rem;
-  width: 12.5rem;
+  height: 5.2rem;
+  width: 16.5rem;
 }
 @media (min-width: 768px) {
   .header__logo-mobile {
@@ -3656,15 +3656,15 @@ fieldset {
   }
   .header__logo-desktop {
     display: block;
-    height: 5rem;
-    width: 15rem;
+    height: 6.8rem;
+    width: 21rem;
   }
 }
 @media (min-width: 992px) {
   .header__logo-desktop {
     display: block;
-    height: 6rem;
-    width: 20rem;
+    height: 7.6rem;
+    width: 24rem;
   }
 }
 .header__bottom {
