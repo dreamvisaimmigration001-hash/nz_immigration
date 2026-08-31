@@ -118,9 +118,9 @@ export default async function UserVisasPage() {
                       <td style={{...tableCellStyle, fontWeight: "600"}}>{visa.fullName || "Unspecified"}</td>
                       <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
                       <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
-                      <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString() : "N/A"}</td>
+                      <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
                       <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
-                      <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString()}</td>
+                      <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString('en-GB')}</td>
                       <td style={{...tableCellStyle, textAlign: "right"}}>
                         {(visa.documentUrl || (visa.document && visa.document.length > 0)) ? (
                           <a 
@@ -210,9 +210,9 @@ export default async function UserVisasPage() {
                       <td style={{...tableCellStyle, fontWeight: "600"}}>{visa.fullName || "Unspecified"}</td>
                       <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
                       <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
-                      <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString() : "N/A"}</td>
+                      <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
                       <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
-                      <td style={tableCellStyle}>{visa.submittedAt ? new Date(visa.submittedAt).toLocaleDateString() : new Date(visa.createdAt).toLocaleDateString()}</td>
+                      <td style={tableCellStyle}>{visa.submittedAt ? new Date(visa.submittedAt).toLocaleDateString('en-GB') : new Date(visa.createdAt).toLocaleDateString('en-GB')}</td>
                       <td style={tableCellStyle}>
                         <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>
                           {visa.status || "Submitted"}

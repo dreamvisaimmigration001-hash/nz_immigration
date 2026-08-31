@@ -250,9 +250,9 @@ export default function DashboardClient({
                           <td style={{ ...tableCellStyle, fontWeight: "600" }}>{visa.fullName || "Unspecified"}</td>
                           <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
                           <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
-                          <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString() : "N/A"}</td>
+                          <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
                           <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
-                          <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString()}</td>
+                          <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString('en-GB')}</td>
                         </tr>
                       ))
                     )}
@@ -289,7 +289,7 @@ export default function DashboardClient({
                           <td style={{ ...tableCellStyle, fontWeight: "600" }}>{visa.fullName || "Unspecified"}</td>
                           <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
                           <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
-                          <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString() : "N/A"}</td>
+                          <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
                           <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
                           <td style={tableCellStyle}>
                             <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>
@@ -355,7 +355,7 @@ export default function DashboardClient({
                         <td style={tableCellStyle}>{sponsorship.employer || "Unspecified"}</td>
                         <td style={tableCellStyle}>{sponsorship.documentNumber || "N/A"}</td>
                         <td style={tableCellStyle}>{sponsorship.nationality || "N/A"}</td>
-                        <td style={tableCellStyle}>{sponsorship.dateOfBirth ? new Date(sponsorship.dateOfBirth).toLocaleDateString() : "N/A"}</td>
+                        <td style={tableCellStyle}>{sponsorship.dateOfBirth ? new Date(sponsorship.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
                         <td style={tableCellStyle}>
                           <span style={{
                             display: "inline-block",

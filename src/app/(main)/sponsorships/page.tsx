@@ -126,9 +126,9 @@ export default async function UserSponsorshipsPage() {
                       <td style={tableCellStyle}>{sponsorship.employer || "Unspecified"}</td>
                       <td style={tableCellStyle}>{sponsorship.documentNumber || "N/A"}</td>
                       <td style={tableCellStyle}>{sponsorship.nationality || "N/A"}</td>
-                      <td style={tableCellStyle}>{sponsorship.dateOfBirth ? new Date(sponsorship.dateOfBirth).toLocaleDateString() : "N/A"}</td>
+                      <td style={tableCellStyle}>{sponsorship.dateOfBirth ? new Date(sponsorship.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
                       <td style={tableCellStyle}>
-                        {sponsorship.validUntil ? `Valid until ${new Date(sponsorship.validUntil).toLocaleDateString()}` : "N/A"}
+                        {sponsorship.validUntil ? `Valid until ${new Date(sponsorship.validUntil).toLocaleDateString('en-GB')}` : "N/A"}
                       </td>
                       <td style={tableCellStyle}>
                         <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>

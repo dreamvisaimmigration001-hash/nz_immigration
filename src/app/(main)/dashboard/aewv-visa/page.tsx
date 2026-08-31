@@ -119,7 +119,7 @@ export default async function AEWVVisaDashboardPage() {
                       </td>
                       <td style={tableCellStyle}>{app.documentNumber || "N/A"}</td>
                       <td style={tableCellStyle}>{app.nationality || "N/A"}</td>
-                      <td style={tableCellStyle}>{app.dateOfBirth ? new Date(app.dateOfBirth).toLocaleDateString() : "N/A"}</td>
+                      <td style={tableCellStyle}>{app.dateOfBirth ? new Date(app.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
                       <td style={tableCellStyle}>{app.jobTitle || "N/A"}</td>
                       <td style={tableCellStyle}>
                         <span style={{ 
