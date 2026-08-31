@@ -225,7 +225,7 @@ export default function DashboardClient({
             {/* Draft Visas Table */}
             <div style={{ marginBottom: "30px" }}>
               <h3 style={{ fontSize: "18px", color: "#1a1f36", margin: "0 0 12px 0", fontWeight: "600" }}>Draft applications</h3>
-              <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden" }}>
+              <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr>
@@ -264,7 +264,7 @@ export default function DashboardClient({
             {/* Submitted Visas Table */}
             <div>
               <h3 style={{ fontSize: "18px", color: "#1a1f36", margin: "0 0 12px 0", fontWeight: "600" }}>Submitted applications</h3>
-              <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden" }}>
+              <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr>
@@ -329,7 +329,7 @@ export default function DashboardClient({
               </Link>
             </div>
 
-            <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden" }}>
+            <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
@@ -401,7 +401,7 @@ export default function DashboardClient({
               </button>
             </div>
 
-            <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden" }}>
+            <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>

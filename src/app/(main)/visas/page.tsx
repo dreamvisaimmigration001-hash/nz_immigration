@@ -78,7 +78,7 @@ export default async function UserVisasPage() {
           </p>
           
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
-            <div style={{ display: "flex", width: "260px", border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden", backgroundColor: "#ffffff" }}>
+            <div style={{ display: "flex", width: "260px", border: "1px solid #d1d5db", borderRadius: "2px", overflowX: "auto", backgroundColor: "#ffffff" }}>
               <input 
                 type="text" 
                 placeholder="Search" 
@@ -92,7 +92,7 @@ export default async function UserVisasPage() {
             <CreateVisaButton userId={userId} token={token} />
           </div>
 
-          <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden" }}>
+          <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
@@ -171,7 +171,7 @@ export default async function UserVisasPage() {
               </button>
             </div>
 
-            <div style={{ display: "flex", width: "260px", border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden", backgroundColor: "#ffffff" }}>
+            <div style={{ display: "flex", width: "260px", border: "1px solid #d1d5db", borderRadius: "2px", overflowX: "auto", backgroundColor: "#ffffff" }}>
               <input 
                 type="text" 
                 placeholder="Search" 
@@ -183,7 +183,7 @@ export default async function UserVisasPage() {
             </div>
           </div>
 
-          <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden" }}>
+          <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
