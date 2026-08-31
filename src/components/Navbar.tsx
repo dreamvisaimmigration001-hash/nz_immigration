@@ -108,43 +108,67 @@ export default function Navbar() {
                 </ul>
               )}
               {status === "authenticated" ? (
-                <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", color: "#374151", fontWeight: "600" }}>
-                    <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#10b981", display: "inline-block" }}></span>
-                    <span style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {session?.user?.name || "Logged In"}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => signOut({ callbackUrl: "/login" })}
-                    style={{
-                      backgroundColor: "#c60c46",
-                      color: "#ffffff",
-                      border: "none",
-                      padding: "8px 18px",
-                      fontWeight: "bold",
-                      fontSize: "12px",
-                      letterSpacing: "0.5px",
-                      cursor: "pointer",
-                      borderRadius: "3px",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      fontFamily: "'Inter', system-ui, sans-serif",
-                      boxShadow: "0 2px 4px rgba(198, 12, 70, 0.2)",
-                      transition: "all 0.15s ease-in-out",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#a8093b")}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#c60c46")}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                      <polyline points="16 17 21 12 16 7"></polyline>
-                      <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                    <span>LOG OUT</span>
-                  </button>
-                </div>
+                // <div
+                //   style={{ display: "flex", alignItems: "center", gap: "14px" }}
+                // >
+                //   {/* <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", color: "#374151", fontWeight: "600" }}>
+                //     <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#10b981", display: "inline-block" }}></span>
+                //     <span style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                //       {session?.user?.name || "Logged In"}
+                //     </span>
+                //   </div> */}
+                //   <button
+                //     onClick={() => signOut({ callbackUrl: "/login" })}
+                //     style={{
+                //       backgroundColor: "#c60c46",
+                //       color: "#ffffff",
+                //       border: "none",
+                //       padding: "8px 18px",
+                //       fontWeight: "bold",
+                //       fontSize: "12px",
+                //       letterSpacing: "0.5px",
+                //       cursor: "pointer",
+                //       borderRadius: "3px",
+                //       display: "inline-flex",
+                //       alignItems: "center",
+                //       gap: "6px",
+                //       fontFamily: "'Inter', system-ui, sans-serif",
+                //       boxShadow: "0 2px 4px rgba(198, 12, 70, 0.2)",
+                //       transition: "all 0.15s ease-in-out",
+                //     }}
+                //     onMouseEnter={(e) =>
+                //       (e.currentTarget.style.backgroundColor = "#a8093b")
+                //     }
+                //     onMouseLeave={(e) =>
+                //       (e.currentTarget.style.backgroundColor = "#c60c46")
+                //     }
+                //   >
+                //     <svg
+                //       width="14"
+                //       height="14"
+                //       viewBox="0 0 24 24"
+                //       fill="none"
+                //       stroke="currentColor"
+                //       strokeWidth="2.5"
+                //       strokeLinecap="round"
+                //       strokeLinejoin="round"
+                //     >
+                //       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                //       <polyline points="16 17 21 12 16 7"></polyline>
+                //       <line x1="21" y1="12" x2="9" y2="12"></line>
+                //     </svg>
+                //     <span>LOG OUT</span>
+                //   </button>
+
+                // </div>
+                <button
+                  className="modal__button--wrapper header-quicklinks__button"
+                  aria-label="Open login modal"
+                  aria-controls="modal-login"
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                >
+                  LOG OUT
+                </button>
               ) : (
                 <button
                   className="modal__button--wrapper header-quicklinks__button"
@@ -159,7 +183,12 @@ export default function Navbar() {
           </div>
           {status === "authenticated" ? (
             <div
-              style={{ borderBottom: "1px solid #eaeaea", marginTop: "-1px", overflowX: "auto", scrollbarWidth: "none" }}
+              style={{
+                borderBottom: "1px solid #eaeaea",
+                marginTop: "-1px",
+                overflowX: "auto",
+                scrollbarWidth: "none",
+              }}
             >
               <nav
                 style={{
@@ -248,7 +277,10 @@ export default function Navbar() {
                   href="/dashboard/aewv-visa"
                   style={{
                     fontWeight: "bold",
-                    color: pathname === "/dashboard/aewv-visa" ? "#1E222C" : "#6b7280",
+                    color:
+                      pathname === "/dashboard/aewv-visa"
+                        ? "#1E222C"
+                        : "#6b7280",
                     textDecoration: "none",
                     borderBottom:
                       pathname === "/dashboard/aewv-visa"

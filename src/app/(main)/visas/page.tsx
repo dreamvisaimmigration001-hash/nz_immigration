@@ -77,13 +77,13 @@ export default async function UserVisasPage() {
           </p>
           
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
-            <div style={{ display: "flex", width: "260px" }}>
+            <div style={{ display: "flex", width: "260px", border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden", backgroundColor: "#ffffff" }}>
               <input 
                 type="text" 
                 placeholder="Search" 
-                style={{ flex: 1, padding: "9px 12px", border: "1px solid #d1d5db", borderRight: "none", outline: "none", fontSize: "14px", borderRadius: "2px 0 0 2px" }} 
+                style={{ flex: 1, padding: "9px 12px", border: "none", outline: "none", fontSize: "14px" }} 
               />
-              <button style={{ padding: "9px 14px", border: "1px solid #d1d5db", backgroundColor: "#f9fafb", cursor: "pointer", color: "#0062a4", borderRadius: "0 2px 2px 0" }}>
+              <button style={{ padding: "9px 14px", border: "none", borderLeft: "1px solid #d1d5db", backgroundColor: "#f9fafb", cursor: "pointer", color: "#0062a4" }}>
                 🔍
               </button>
             </div>
@@ -109,9 +109,11 @@ export default async function UserVisasPage() {
               <thead>
                 <tr>
                   <th style={tableHeaderStyle}>Principal applicant</th>
+                  <th style={tableHeaderStyle}>Passport Number</th>
+                  <th style={tableHeaderStyle}>Nationality</th>
+                  <th style={tableHeaderStyle}>Date of Birth</th>
                   <th style={{...tableHeaderStyle, width: "28%"}}>Application type</th>
                   <th style={tableHeaderStyle}>Created on</th>
-                  <th style={{...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "130px"}}>Options</th>
                 </tr>
               </thead>
               <tbody>
@@ -125,16 +127,11 @@ export default async function UserVisasPage() {
                   draftVisas.map((visa: any, index: number) => (
                     <tr key={visa._id} style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
                       <td style={{...tableCellStyle, fontWeight: "600"}}>{visa.fullName || "Unspecified"}</td>
+                      <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
+                      <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
+                      <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString() : "N/A"}</td>
                       <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
                       <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString()}</td>
-                      <td style={{...tableCellStyle, borderRight: "none", textAlign: "center"}}>
-                        <Link 
-                          href={`/dashboard/aewv-visa?id=${visa._id}`}
-                          style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "6px 14px", textDecoration: "none", fontWeight: "600", fontSize: "12px", borderRadius: "2px", display: "inline-block" }}
-                        >
-                          Continue
-                        </Link>
-                      </td>
                     </tr>
                   ))
                 )}
@@ -159,13 +156,13 @@ export default async function UserVisasPage() {
               </button>
             </div>
 
-            <div style={{ display: "flex", width: "260px" }}>
+            <div style={{ display: "flex", width: "260px", border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden", backgroundColor: "#ffffff" }}>
               <input 
                 type="text" 
                 placeholder="Search" 
-                style={{ flex: 1, padding: "9px 12px", border: "1px solid #d1d5db", borderRight: "none", outline: "none", fontSize: "14px", borderRadius: "2px 0 0 2px" }} 
+                style={{ flex: 1, padding: "9px 12px", border: "none", outline: "none", fontSize: "14px" }} 
               />
-              <button style={{ padding: "9px 14px", border: "1px solid #d1d5db", backgroundColor: "#f9fafb", cursor: "pointer", color: "#0062a4", borderRadius: "0 2px 2px 0" }}>
+              <button style={{ padding: "9px 14px", border: "none", borderLeft: "1px solid #d1d5db", backgroundColor: "#f9fafb", cursor: "pointer", color: "#0062a4" }}>
                 🔍
               </button>
             </div>
@@ -176,10 +173,12 @@ export default async function UserVisasPage() {
               <thead>
                 <tr>
                   <th style={tableHeaderStyle}>Principal applicant</th>
+                  <th style={tableHeaderStyle}>Passport Number</th>
+                  <th style={tableHeaderStyle}>Nationality</th>
+                  <th style={tableHeaderStyle}>Date of Birth</th>
                   <th style={{...tableHeaderStyle, width: "28%"}}>Application type</th>
                   <th style={tableHeaderStyle}>Submitted on</th>
                   <th style={tableHeaderStyle}>Status</th>
-                  <th style={{...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "130px"}}>Options</th>
                 </tr>
               </thead>
               <tbody>
@@ -193,17 +192,15 @@ export default async function UserVisasPage() {
                   submittedVisas.map((visa: any, index: number) => (
                     <tr key={visa._id} style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
                       <td style={{...tableCellStyle, fontWeight: "600"}}>{visa.fullName || "Unspecified"}</td>
+                      <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
+                      <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
+                      <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString() : "N/A"}</td>
                       <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
                       <td style={tableCellStyle}>{visa.submittedAt ? new Date(visa.submittedAt).toLocaleDateString() : new Date(visa.createdAt).toLocaleDateString()}</td>
                       <td style={tableCellStyle}>
                         <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>
                           {visa.status || "Submitted"}
                         </span>
-                      </td>
-                      <td style={{...tableCellStyle, borderRight: "none", textAlign: "center"}}>
-                        <button style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "6px 14px", fontWeight: "600", fontSize: "12px", cursor: "pointer", borderRadius: "2px" }}>
-                          View
-                        </button>
                       </td>
                     </tr>
                   ))

@@ -7,8 +7,29 @@ import Link from "next/link";
 export default async function AEWVVisaDashboardPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
+  if (!session || !(session as any).apiToken) {
     redirect("/login");
+  }
+
+  const userId = (session.user as any).id;
+  const token = (session as any).apiToken;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  let aewvApplications: any[] = [];
+  try {
+    const res = await fetch(`${API_URL}/api/visas/user/${userId}?origin=nz`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      cache: 'no-store'
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const allVisas = data.visas || [];
+      aewvApplications = allVisas.filter((item: any) => item.applicationType === 'aewv');
+    }
+  } catch (e) {
+    console.error("Failed to fetch AEWV data", e);
   }
 
   const tableHeaderStyle = { 
@@ -20,6 +41,14 @@ export default async function AEWVVisaDashboardPage() {
     borderBottom: "2px solid #1a1f36", 
     backgroundColor: "#f9fafb",
     fontSize: "13px"
+  };
+
+  const tableCellStyle = {
+    padding: "16px",
+    borderRight: "1px solid #e5e7eb",
+    borderBottom: "1px solid #e5e7eb",
+    color: "#374151",
+    fontSize: "14px"
   };
 
   return (
@@ -74,17 +103,46 @@ export default async function AEWVVisaDashboardPage() {
               <thead>
                 <tr>
                   <th style={tableHeaderStyle}>Applicant name</th>
+                  <th style={tableHeaderStyle}>Passport Number</th>
+                  <th style={tableHeaderStyle}>Nationality</th>
+                  <th style={tableHeaderStyle}>Date of Birth</th>
                   <th style={{...tableHeaderStyle, width: "30%"}}>Job Title</th>
                   <th style={tableHeaderStyle}>Status</th>
-                  <th style={{...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "130px"}}>Options</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colSpan={4} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
-                    No AEWV applications found.
-                  </td>
-                </tr>
+                {aewvApplications.length > 0 ? (
+                  aewvApplications.map((app: any, idx: number) => (
+                    <tr key={app._id || idx} style={{ backgroundColor: idx % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
+                      <td style={{ ...tableCellStyle, fontWeight: "600", color: "#111827" }}>
+                        {app.name || app.applicantName || app.fullName || "N/A"}
+                      </td>
+                      <td style={tableCellStyle}>{app.documentNumber || "N/A"}</td>
+                      <td style={tableCellStyle}>{app.nationality || "N/A"}</td>
+                      <td style={tableCellStyle}>{app.dateOfBirth ? new Date(app.dateOfBirth).toLocaleDateString() : "N/A"}</td>
+                      <td style={tableCellStyle}>{app.jobTitle || "N/A"}</td>
+                      <td style={tableCellStyle}>
+                        <span style={{ 
+                          display: "inline-block", 
+                          padding: "4px 8px", 
+                          borderRadius: "9999px", 
+                          fontSize: "12px", 
+                          fontWeight: "500", 
+                          backgroundColor: (app.visaStatus === "Draft" || app.status === "Draft") ? "#f3f4f6" : "#def7ec", 
+                          color: (app.visaStatus === "Draft" || app.status === "Draft") ? "#4b5563" : "#03543f" 
+                        }}>
+                          {app.visaStatus || app.status || "Draft"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
+                      No AEWV applications found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

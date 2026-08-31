@@ -230,9 +230,11 @@ export default function DashboardClient({
                   <thead>
                     <tr>
                       <th style={tableHeaderStyle}>Principal applicant</th>
+                      <th style={tableHeaderStyle}>Passport Number</th>
+                      <th style={tableHeaderStyle}>Nationality</th>
+                      <th style={tableHeaderStyle}>Date of Birth</th>
                       <th style={{ ...tableHeaderStyle, width: "25%" }}>Application type</th>
                       <th style={tableHeaderStyle}>Created on</th>
-                      <th style={{ ...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "140px" }}>Options</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -246,16 +248,11 @@ export default function DashboardClient({
                       draftVisas.map((visa: any, index: number) => (
                         <tr key={visa._id} style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
                           <td style={{ ...tableCellStyle, fontWeight: "600" }}>{visa.fullName || "Unspecified"}</td>
+                          <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
+                          <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
+                          <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString() : "N/A"}</td>
                           <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
                           <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString()}</td>
-                          <td style={{ ...tableCellStyle, borderRight: "none", textAlign: "center" }}>
-                            <Link
-                              href={`/dashboard/aewv-visa?id=${visa._id}`}
-                              style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "7px 16px", textDecoration: "none", fontWeight: "600", fontSize: "13px", borderRadius: "2px", display: "inline-block" }}
-                            >
-                              Continue
-                            </Link>
-                          </td>
                         </tr>
                       ))
                     )}
@@ -272,9 +269,11 @@ export default function DashboardClient({
                   <thead>
                     <tr>
                       <th style={tableHeaderStyle}>Principal applicant</th>
+                      <th style={tableHeaderStyle}>Passport Number</th>
+                      <th style={tableHeaderStyle}>Nationality</th>
+                      <th style={tableHeaderStyle}>Date of Birth</th>
                       <th style={{ ...tableHeaderStyle, width: "25%" }}>Application type</th>
                       <th style={tableHeaderStyle}>Status</th>
-                      <th style={{ ...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "140px" }}>Options</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -288,16 +287,14 @@ export default function DashboardClient({
                       submittedVisas.map((visa: any, index: number) => (
                         <tr key={visa._id} style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
                           <td style={{ ...tableCellStyle, fontWeight: "600" }}>{visa.fullName || "Unspecified"}</td>
+                          <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
+                          <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
+                          <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString() : "N/A"}</td>
                           <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
                           <td style={tableCellStyle}>
                             <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>
                               {visa.status || "Submitted"}
                             </span>
-                          </td>
-                          <td style={{ ...tableCellStyle, borderRight: "none", textAlign: "center" }}>
-                            <button style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "7px 16px", fontWeight: "600", fontSize: "13px", cursor: "pointer", borderRadius: "2px" }}>
-                              View
-                            </button>
                           </td>
                         </tr>
                       ))
@@ -338,8 +335,10 @@ export default function DashboardClient({
                   <tr>
                     <th style={{ ...tableHeaderStyle, width: "30%" }}>Type</th>
                     <th style={tableHeaderStyle}>Employer</th>
+                    <th style={tableHeaderStyle}>Passport Number</th>
+                    <th style={tableHeaderStyle}>Nationality</th>
+                    <th style={tableHeaderStyle}>Date of Birth</th>
                     <th style={tableHeaderStyle}>Status</th>
-                    <th style={{ ...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "140px" }}>Options</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -354,6 +353,9 @@ export default function DashboardClient({
                       <tr key={sponsorship._id} style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
                         <td style={{ ...tableCellStyle, fontWeight: "600" }}>{sponsorship.type || "Employer Accreditation"}</td>
                         <td style={tableCellStyle}>{sponsorship.employer || "Unspecified"}</td>
+                        <td style={tableCellStyle}>{sponsorship.documentNumber || "N/A"}</td>
+                        <td style={tableCellStyle}>{sponsorship.nationality || "N/A"}</td>
+                        <td style={tableCellStyle}>{sponsorship.dateOfBirth ? new Date(sponsorship.dateOfBirth).toLocaleDateString() : "N/A"}</td>
                         <td style={tableCellStyle}>
                           <span style={{
                             display: "inline-block",
@@ -366,11 +368,6 @@ export default function DashboardClient({
                           }}>
                             {sponsorship.status || "Active"}
                           </span>
-                        </td>
-                        <td style={{ ...tableCellStyle, borderRight: "none", textAlign: "center" }}>
-                          <button style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "7px 16px", fontWeight: "600", fontSize: "13px", cursor: "pointer", borderRadius: "2px" }}>
-                            View Details
-                          </button>
                         </td>
                       </tr>
                     ))
