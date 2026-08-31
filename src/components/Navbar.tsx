@@ -8,12 +8,18 @@ import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [activeMobileMenu, setActiveMobileMenu] = useState<number | null>(null);
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    const t = setTimeout(() => setActiveMenu(null), 0);
+    const t = setTimeout(() => {
+      setActiveMenu(null);
+      setIsMobileMenuOpen(false);
+      setActiveMobileMenu(null);
+    }, 0);
     return () => clearTimeout(t);
   }, [pathname]);
 
@@ -1137,7 +1143,11 @@ export default function Navbar() {
                   data-button-label="Open menu"
                   data-show-logo="true"
                 >
-                  <div>
+                  <button 
+                    className="header__actions-button header__actions-button--menu" 
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                  >
                     <svg
                       aria-hidden="true"
                       focusable="false"
@@ -1147,661 +1157,67 @@ export default function Navbar() {
                     >
                       <path d="M0 1.333C0 .597.597 0 1.333 0H20a1.333 1.333 0 1 1 0 2.667H1.333A1.333 1.333 0 0 1 0 1.333ZM0 8c0-.736.597-1.333 1.333-1.333H20a1.333 1.333 0 1 1 0 2.666H1.333A1.333 1.333 0 0 1 0 8Zm0 6.667c0-.737.597-1.334 1.333-1.334H20A1.333 1.333 0 0 1 20 16H1.333A1.333 1.333 0 0 1 0 14.667Z" />
                     </svg>
-                  </div>
-                  <div>
-                    <div className="mobile-nav mobile-nav__container">
-                      <div className="mobile-nav__content">
-                        <nav
-                          className="mobile-nav"
-                          aria-label="Mobile navigation"
+                  </button>
+                  <div style={{ display: isMobileMenuOpen ? 'flex' : 'none', flexDirection: 'column', position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#1E222C', zIndex: 1000, overflowY: 'auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 20px 32px 20px', borderBottom: '1px solid #374151' }}>
+                      <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="120"
+                          height="40"
+                          fill="none"
+                          viewBox="0 0 157 50"
                         >
-                          <ul className="mobile-nav__items">
-                            <div
-                              data-tag="mobile-menu-item"
-                              data-position="1"
-                              data-url="/visit/"
-                              data-chevron-button-label="Visit - Toro"
-                              data-has-sub-menu="1"
-                              data-on-menu-close="handleSubmenuClose"
-                            >
-                              <div>
-                                <span className="navigation navigation--primary">
-                                  Visit
-                                </span>
-                                <span className="navigation navigation--alt">
-                                  Toro
-                                </span>
-                              </div>
-                              <div>
-                                <div className="mobile-nav__content">
-                                  <div className="mobile-nav__page-info">
-                                    <Link
-                                      href="/visit/"
-                                      className="navigation__page-title"
-                                    >
-                                      <span className="navigation navigation--primary">
-                                        Visit
-                                      </span>
-                                      <span className="navigation navigation--alt">
-                                        Toro
-                                      </span>
-                                      <span
-                                        className="navigation__arrow"
-                                        role="presentation"
-                                      >
-                                        <svg
-                                          aria-hidden="true"
-                                          focusable="false"
-                                          viewBox="0 0 23 17"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path d="m14.635 16.255 7.944-7.15a.812.812 0 0 0 .278-.605.813.813 0 0 0-.278-.605L14.635.748A.99.99 0 0 0 13.97.5c-.245 0-.49.085-.676.252a.793.793 0 0 0-.005 1.206l6.322 5.685H.952C.427 7.643 0 8.027 0 8.5s.427.857.952.857h18.66l-6.324 5.686a.793.793 0 0 0 .007 1.204c.188.169.434.253.677.253.242 0 .48-.082.663-.245Z" />
-                                        </svg>
-                                      </span>
-                                    </Link>
+                          <g fill="#FFFFFF" clipPath="url(#a)">
+                            <path d="M8.631 37.185c.1-.123 2.18 8.405 13.756 6.95-2.27-5.555-9.343-9.193-10.98-9.295.31-.245 2.349-1.789 2.68-1.978-.441 1.503 6.201 7.777 11.336 6.04-1.368-4.251-7.008-7.843-8.466-7.9.611-.316 1.222-.812 1.858-1.118-.335.807 4.549 5.666 9.769 5.278.05-2.52-5.6-7.332-6.693-6.95.521-.28 1.318-.756 1.558-.878.741 1.737 5.56 5.447 8.877 4.839-2.716-5.84-6.172-6.188-6.202-6.193.917-.445 1.463-.726 1.628-.802.01 1.568 4.754 5.104 8.065 4.276-.671-2.6-3.281-5.135-5.84-5.375l1.747-.843c-.27.49 3.743 3.893 7.54 3.679-1.834-4.527-4.349-4.624-5.25-4.798.51-.235 1.067-.547 1.603-.833.215.578 2.284 3.567 7.289 2.81-1.263-2.759-3.903-3.678-5.29-3.776.71-.429 1.242-.608 1.758-.904.355.419 1.603 3.112 6.682 2.13-1.077-2.615-3.406-3.239-4.318-3.418.431-.265.937-.546 1.278-.75.34.597 2.925 2.482 5.715 1.696-.536-1.58-2.514-2.524-4.288-2.586a31.8 31.8 0 0 0 1.483-1.037c.256.613 1.773 2.085 5.3 1.098-1.132-2.253-4.027-1.977-4.057-1.962.696-.526.896-.71 1.442-1.139.055.026 1.688 2.345 4.544.73-.862-1.333-2.13-2.043-3.442-1.69.386-.389.717-.67 1.037-1.038-.125.337 2.124 1.543 4.103-.02-.947-.935-1.984-1.17-3.11-1.099.224-.332.29-.306.59-.71 0 0 1.769 1.344 3.442-.327-1.363-1.032-2.94-.373-2.946-.373l.646-1.012c.286.383 2.194.751 2.86-.547-.55-.541-2.264-.357-2.444-.23.055-.05.21-.424.31-.623 3.532.44 2.325-3.745 1.529-6.1C42.42 21.017 24.716 6.435 3.066 19.392c-1.012 2.678-1.378 5.473-1.112 8.385.03.287.025.511.14 1.16-.04.2.24 1.794.816 3.567.426 1.262.907 2.11 1.438 3.413.316-.24.676-.516.922-.736-.967-1.4-4.223-9.887-.18-14.838 3.837-.067 4.273 11.103 3.631 12.288.025 0 1.784-1.205 2.465-1.635-.822-.332-3.727-10.04 1.122-14.071 0 0 4.323 1.686 2.525 11.925.736-.49 1.768-.935 2.785-1.466-.551-.976-3.506-8.308 1.222-12.135 2.545 1.063 2.415 9.074 1.418 10.822.817-.389 1.693-.854 2.51-1.232-1.493-.7-1.378-8.236 1.137-10.29 2.8 2.682 2.119 7.189 1.418 9.161 0 0 2.119-.894 2.104-.889-1.669-3.204-.892-7.082.891-8.61 1.368.895 1.743 3.475 1.117 7.752.596-.246.937-.424 1.523-.644-.366-.705-1.327-5.069 1.137-7.42 2.204 1.069 1.423 5.923 1.258 6.418.02-.035 1.292-.51 1.272-.552-.43-.945-.736-4.537 1.297-6.269.807.588 1.659 2.223.892 5.32.471-.236.982-.44 1.463-.665-.687-.782-.19-3.935.846-5.197 1.243.557 1.774 3.286 1.328 4.19.31-.158.711-.357 1.217-.649-.396-.638-.526-3.576.691-4.378 1.193.832 1.072 2.983 1.027 3.464.341-.225 1.338-.746 1.318-.762-.656-.597-.972-2.57.44-3.76 1.228.276 1.253 2.616 1.148 2.77.48-.318 1.242-.88 1.628-1.17-1.127-.251-.997-2.096-.386-2.913.747.158 1.273.618 1.518 1.977.29-.27.977-.838 1.187-1.088-.681-.056-1.533-1.564-.48-2.555.315.133 1.287.552 1.382 1.62.14-.103.651-.762.736-.88-.466-.173-.992-1.619-.506-2.253.647-.06 1.218.828 1.308 1.201l.631-.935c-.36-.301-1.112-1.17-.45-1.931.726.036.986.598 1.141 1.124-7.333 14.639-36.939 17.148-52.388 34.75 0 0-1.608 1.712-1.608 2.53v5.942h.31c.782-2.233 3.282-7.915 8.311-12.064M64.922-.002c-1.738.04-3.121 1.522-3.081 3.29.04 1.768 1.493 3.178 3.236 3.132 1.743-.04 3.126-1.517 3.08-3.29-.044-1.773-1.497-3.178-3.24-3.132h.005Zm2.865 3.142c.035 1.558-1.182 2.866-2.715 2.902-1.538.036-2.815-1.206-2.855-2.759-.04-1.564 1.177-2.866 2.715-2.902 1.533-.036 2.815 1.2 2.855 2.759Z"></path>
+                            <path d="M64.601 2.557v-.383h-1.658v.383h.616V4.53h.411V2.557h.631Zm2.305 1.973V2.174h-.426l-.681 1.339-.677-1.339h-.416V4.53h.416V2.992l.491.986h.38l.487-.986V4.53h.425Zm84.698 27.065h-3.982v-11.23h3.982c1.223 0 2.225.372 2.921 1.078 1.132 1.16 1.127 2.575 1.117 4.072v.838c0 1.548.02 3.004-1.117 4.164-.696.705-1.703 1.078-2.921 1.078Zm-1.758-2.033h1.563c.691 0 1.187-.21 1.558-.67.391-.485.451-1.267.451-2.958 0-1.692-.065-2.381-.451-2.862-.376-.46-.867-.669-1.558-.669h-1.563v7.159Zm-43.847 2.033h-7.284V24.08c0-.751-.01-2.248.34-2.815.382-.598.867-.9 1.819-.9h5.13v2.034h-3.963c-.275 0-.576.061-.801.286-.22.225-.296.675-.296.97v1.253h4.308v2.038h-4.308v2.606h5.06v2.034l-.005.01Zm-34.7-11.23h-7.284v7.52c0 .752-.015 2.249.336 2.811.38.603.866.9 1.818.9h5.135v-2.034H67.34c-.28 0-.58-.062-.801-.281-.22-.23-.29-.68-.29-.976v-1.252h4.307v-2.034H66.25v-2.61h5.06v-2.034l-.01-.01Zm53.956 9.197v2.033h-7.178v-9.78c.01-.71-.206-1.037-.717-1.348l-.025-.01s-.015-.026-.015-.041c0-.031.02-.052.045-.052h1.308c.871 0 1.578.276 1.628 2.422v6.776h4.954Zm-63.514 2.033h-1.974l-4.248-6.714v6.714h-2.224v-11.23h1.969l4.248 6.703v-6.704h2.229v11.231Zm81.362-6.198v-3.796c-.04-.583-.18-.894-.636-1.13l-.025-.01s-.015-.025-.015-.04c0-.031.02-.052.045-.052h1.283c1.032-.04 1.553.747 1.573 2.35V31.6h-1.974l-4.248-6.714V31.6h-2.224V20.37h1.974l4.242 6.703v-1.67l.005-.006Zm-10.98-3.934c-.246-.736-.686-1.104-1.318-1.099h-.816l-4.003 11.231h2.33l.656-1.967h3.807l.646 1.967h2.33l-3.627-10.132h-.005Zm-2.525 6.234 1.313-3.853 1.267 3.853h-2.58Zm-16.295-6.234c-.246-.736-.687-1.104-1.318-1.099h-.816l-4.008 11.231h2.324l.662-1.967h3.807l.646 1.967h2.324l-3.621-10.132Zm-2.525 6.234 1.317-3.853 1.268 3.853h-2.585Zm-34.004-.45 1.954-6.883h1.668l1.954 6.883 1.668-6.883h2.324l-2.956 11.231h-1.848l-1.974-6.632-1.973 6.632h-1.854l-2.525-9.631c-.24-.94-.516-1.247-1.137-1.497l-.025-.01s-.02-.026-.02-.041c0-.031.02-.057.045-.057h1.473c1.057.01 1.683.526 1.919 1.554l1.297 5.329.01.005Zm19.527-3.934c.415-.736.701-1.636.726-2.335v-.614h-7.073v2.034h4.418l-4.619 7.383v1.814h7.274v-2.033h-4.639l3.908-6.25h.005ZM101.055 36.112c-.201-.598-.556-.894-1.072-.894h-.667l-3.256 9.136h1.894l.536-1.605h3.101l.521 1.605h1.893l-2.95-8.242Zm-2.054 5.074 1.067-3.132 1.032 3.132H99Zm-15.264 3.122c-.942 0-1.743-.332-2.39-.991-.871-.89-.871-1.973-.871-3.47v-.245c0-1.497 0-2.575.872-3.47.65-.664 1.432-.99 2.39-.99 1.166 0 1.873.3 2.71 1.154l.03.026-1.213 1.236-.025-.03c-.501-.511-.852-.752-1.498-.752-.43 0-.811.164-1.067.46-.316.358-.41.726-.41 2.483 0 1.758.1 2.141.41 2.494.25.291.626.45 1.067.45.471 0 .842-.159 1.142-.49.306-.343.371-.834.371-1.191v-.276h-1.548v-1.533h3.336v1.318c0 1.36-.23 2.136-.821 2.764-.651.69-1.483 1.043-2.475 1.043l-.01.01Zm-18.244.04H63.68v-5.145l-1.634 3.306H60.83l-1.648-3.31v5.15h-1.808v-9.131h1.768l2.3 4.844 2.279-4.844h1.773v9.13Zm9.898 0h-1.808v-5.145L71.95 42.51h-1.222l-1.643-3.31v5.15H67.27v-9.131h1.774l2.294 4.844 2.28-4.844h1.772v9.13Zm42.936-.04c-.977 0-1.773-.327-2.435-1.007-.886-.904-.886-1.998-.886-3.515v-.245c0-1.518 0-2.611.886-3.516.662-.674 1.458-1.001 2.435-1.001.977 0 1.758.327 2.42 1.001.896.915.896 2.034.896 3.577v.123c0 1.543 0 2.662-.896 3.576-.662.675-1.453 1.007-2.42 1.007Zm0-7.629c-.441 0-.837.169-1.092.47-.321.363-.416.741-.416 2.52 0 1.778.095 2.15.416 2.513.255.302.651.47 1.092.47.441 0 .822-.168 1.082-.47.326-.368.426-.766.426-2.519 0-1.752-.1-2.15-.426-2.519-.26-.301-.641-.47-1.082-.47v.005Zm-10.775 7.67h-1.814v-7.475h-2.319v-1.656h6.452v1.655h-2.319v7.476Zm22.507 0h-1.608l-3.456-5.457v5.457h-1.809v-9.131h1.603l3.457 5.452v-5.452h1.813v9.13Zm-52.994-6.74v-1.216c.01-.577-.166-.843-.587-1.093l-.02-.01s-.01-.02-.01-.031c0-.026.016-.041.04-.041h1.063c.71 0 1.292.245 1.327 1.993v7.143h-1.813v-6.745Zm-23.054 0v-1.216c.01-.577-.165-.843-.586-1.093l-.02-.01s-.01-.02-.01-.031c0-.026.015-.041.04-.041h1.062c.717 0 1.293.245 1.328 1.993v7.143H54.01v-6.745Zm57.488 0v-1.216c.01-.577-.165-.843-.586-1.093l-.02-.01s-.01-.02-.01-.031c0-.026.015-.041.035-.041h1.062c.711 0 1.293.245 1.328 1.993v7.143h-1.814v-6.745h.005Zm-16.13 6.74h-2.094l-1.733-3.613H90.36v3.613h-1.814v-9.136h3.517c1.718 0 2.92 1.155 2.92 2.81 0 1.114-.6 2.008-1.603 2.402l1.989 3.924Zm-5.014-5.166h1.593c.73 0 1.222-.465 1.222-1.155s-.491-1.154-1.222-1.154h-1.593v2.309Z"></path>
+                          </g>
+                          <defs>
+                            <clipPath id="a">
+                              <path fill="#fff" d="M0 0h156.25v50H0z"></path>
+                            </clipPath>
+                          </defs>
+                        </svg>
+                      </Link>
+                      <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      </button>
+                    </div>
 
-                                    <p className="paragraph">
-                                      Learn what you need to do to visit New
-                                      Zealand. Find out whether you need a visa
-                                      or a New Zealand Electronic Travel
-                                      Authority (NZeTA), and what you must do
-                                      before travelling here, and on arrival.
-                                    </p>
-                                  </div>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <Link href="/visit/" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'block', padding: '16px 20px', borderBottom: '1px solid #374151', textDecoration: 'none', color: '#fff' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Visit</span><span style={{ fontWeight: 'normal', fontSize: '18px', marginLeft: '6px' }}>Toro</span>
+                      </Link>
+                      <Link href="/study/" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'block', padding: '16px 20px', borderBottom: '1px solid #374151', textDecoration: 'none', color: '#fff' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Study</span><span style={{ fontWeight: 'normal', fontSize: '18px', marginLeft: '6px' }}>Ako</span>
+                      </Link>
+                      <Link href="/work/" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'block', padding: '16px 20px', borderBottom: '1px solid #374151', textDecoration: 'none', color: '#fff' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Work</span><span style={{ fontWeight: 'normal', fontSize: '18px', marginLeft: '6px' }}>Mahi</span>
+                      </Link>
+                      <Link href="/live/" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'block', padding: '16px 20px', borderBottom: '1px solid #374151', textDecoration: 'none', color: '#fff' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Live</span><span style={{ fontWeight: 'normal', fontSize: '18px', marginLeft: '6px' }}>Ora</span>
+                      </Link>
+                      <Link href="/about-us/" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'block', padding: '16px 20px', borderBottom: '1px solid #374151', textDecoration: 'none', color: '#fff' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '18px' }}>About us</span>
+                      </Link>
+                    </div>
 
-                                  <nav className="mobile-nav__items mobile-nav__items">
-                                    <ul className="mobile-nav__links">
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          What you need to visit New Zealand
-                                        </Link>
-                                      </li>
+                    <div style={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
+                      <Link href="/process-to-apply/" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'block', padding: '12px 20px', textDecoration: 'none', color: '#fff', fontSize: '15px', fontWeight: 'bold' }}>
+                        Process to apply
+                      </Link>
+                      <Link href="/work/for-employers/" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'block', padding: '12px 20px', textDecoration: 'none', color: '#fff', fontSize: '15px', fontWeight: 'bold' }}>
+                        For employers
+                      </Link>
+                    </div>
 
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Checking or changing the conditions of
-                                          your visitor visa or NZeTA
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Visiting on business
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Transiting through New Zealand
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Crew travelling to New Zealand
-                                        </Link>
-                                      </li>
-                                    </ul>
-                                  </nav>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div
-                              data-tag="mobile-menu-item"
-                              data-position="2"
-                              data-url="/study/"
-                              data-chevron-button-label="Study - Ako"
-                              data-has-sub-menu="1"
-                              data-on-menu-close="handleSubmenuClose"
-                            >
-                              <div>
-                                <span className="navigation navigation--primary">
-                                  Study
-                                </span>
-                                <span className="navigation navigation--alt">
-                                  Ako
-                                </span>
-                              </div>
-                              <div>
-                                <div className="mobile-nav__content">
-                                  <div className="mobile-nav__page-info">
-                                    <Link
-                                      href="/study/"
-                                      className="navigation__page-title"
-                                    >
-                                      <span className="navigation navigation--primary">
-                                        Study
-                                      </span>
-                                      <span className="navigation navigation--alt">
-                                        Ako
-                                      </span>
-                                      <span
-                                        className="navigation__arrow"
-                                        role="presentation"
-                                      >
-                                        <svg
-                                          aria-hidden="true"
-                                          focusable="false"
-                                          viewBox="0 0 23 17"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path d="m14.635 16.255 7.944-7.15a.812.812 0 0 0 .278-.605.813.813 0 0 0-.278-.605L14.635.748A.99.99 0 0 0 13.97.5c-.245 0-.49.085-.676.252a.793.793 0 0 0-.005 1.206l6.322 5.685H.952C.427 7.643 0 8.027 0 8.5s.427.857.952.857h18.66l-6.324 5.686a.793.793 0 0 0 .007 1.204c.188.169.434.253.677.253.242 0 .48-.082.663-.245Z" />
-                                        </svg>
-                                      </span>
-                                    </Link>
-
-                                    <p className="paragraph">
-                                      Find out about visas that let you study in
-                                      New Zealand. If you are an education
-                                      provider, learn about the rules for
-                                      bringing students to New Zealand.{" "}
-                                    </p>
-                                  </div>
-
-                                  <nav className="mobile-nav__items mobile-nav__items">
-                                    <ul className="mobile-nav__links">
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Study visas
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Once you have a student visa
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          After you finish your study
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          For education providers
-                                        </Link>
-                                      </li>
-                                    </ul>
-                                  </nav>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div
-                              data-tag="mobile-menu-item"
-                              data-position="3"
-                              data-url="/work/"
-                              data-chevron-button-label="Work - Mahi"
-                              data-has-sub-menu="1"
-                              data-on-menu-close="handleSubmenuClose"
-                            >
-                              <div>
-                                <span className="navigation navigation--primary">
-                                  Work
-                                </span>
-                                <span className="navigation navigation--alt">
-                                  Mahi
-                                </span>
-                              </div>
-                              <div>
-                                <div className="mobile-nav__content">
-                                  <div className="mobile-nav__page-info">
-                                    <Link
-                                      href="/work/"
-                                      className="navigation__page-title"
-                                    >
-                                      <span className="navigation navigation--primary">
-                                        Work
-                                      </span>
-                                      <span className="navigation navigation--alt">
-                                        Mahi
-                                      </span>
-                                      <span
-                                        className="navigation__arrow"
-                                        role="presentation"
-                                      >
-                                        <svg
-                                          aria-hidden="true"
-                                          focusable="false"
-                                          viewBox="0 0 23 17"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path d="m14.635 16.255 7.944-7.15a.812.812 0 0 0 .278-.605.813.813 0 0 0-.278-.605L14.635.748A.99.99 0 0 0 13.97.5c-.245 0-.49.085-.676.252a.793.793 0 0 0-.005 1.206l6.322 5.685H.952C.427 7.643 0 8.027 0 8.5s.427.857.952.857h18.66l-6.324 5.686a.793.793 0 0 0 .007 1.204c.188.169.434.253.677.253.242 0 .48-.082.663-.245Z" />
-                                        </svg>
-                                      </span>
-                                    </Link>
-
-                                    <p className="paragraph">
-                                      Find information about work visas and
-                                      working in New Zealand. Employers can
-                                      learn about hiring people from overseas
-                                      and getting accredited.
-                                    </p>
-                                  </div>
-
-                                  <nav className="mobile-nav__items mobile-nav__items">
-                                    <ul className="mobile-nav__links">
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Visas for working in New Zealand
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Working holiday visas
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Finding work in New Zealand
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Requirements for work visas
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="/work/for-employers/"
-                                        >
-                                          For employers
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Worker rights
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Visas for investing and doing business
-                                          in New Zealand
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Protecting yourself from immigration
-                                          scams
-                                        </Link>
-                                      </li>
-                                    </ul>
-                                  </nav>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div
-                              data-tag="mobile-menu-item"
-                              data-position="4"
-                              data-url="/live/"
-                              data-chevron-button-label="Live - Ora"
-                              data-has-sub-menu="1"
-                              data-on-menu-close="handleSubmenuClose"
-                            >
-                              <div>
-                                <span className="navigation navigation--primary">
-                                  Live
-                                </span>
-                                <span className="navigation navigation--alt">
-                                  Ora
-                                </span>
-                              </div>
-                              <div>
-                                <div className="mobile-nav__content">
-                                  <div className="mobile-nav__page-info">
-                                    <Link
-                                      href="/live/"
-                                      className="navigation__page-title"
-                                    >
-                                      <span className="navigation navigation--primary">
-                                        Live
-                                      </span>
-                                      <span className="navigation navigation--alt">
-                                        Ora
-                                      </span>
-                                      <span
-                                        className="navigation__arrow"
-                                        role="presentation"
-                                      >
-                                        <svg
-                                          aria-hidden="true"
-                                          focusable="false"
-                                          viewBox="0 0 23 17"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path d="m14.635 16.255 7.944-7.15a.812.812 0 0 0 .278-.605.813.813 0 0 0-.278-.605L14.635.748A.99.99 0 0 0 13.97.5c-.245 0-.49.085-.676.252a.793.793 0 0 0-.005 1.206l6.322 5.685H.952C.427 7.643 0 8.027 0 8.5s.427.857.952.857h18.66l-6.324 5.686a.793.793 0 0 0 .007 1.204c.188.169.434.253.677.253.242 0 .48-.082.663-.245Z" />
-                                        </svg>
-                                      </span>
-                                    </Link>
-
-                                    <p className="paragraph">
-                                      Find visas to live in Aotearoa New
-                                      Zealand. Get information about living here
-                                      permanently and what life in Aotearoa is
-                                      like.
-                                    </p>
-                                  </div>
-
-                                  <nav className="mobile-nav__items mobile-nav__items">
-                                    <ul className="mobile-nav__links">
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Moving to New Zealand{" "}
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Resident visas to live in New Zealand
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Refugees and asylum seeker information
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Setting up your life in New Zealand
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Staying safe and knowing your rights
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Where to apply for New Zealand
-                                          citizenship and a passport
-                                        </Link>
-                                      </li>
-                                    </ul>
-                                  </nav>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div
-                              data-tag="mobile-menu-item"
-                              data-position="5"
-                              data-url="/about-us/"
-                              data-chevron-button-label="About us - "
-                              data-has-sub-menu="1"
-                              data-on-menu-close="handleSubmenuClose"
-                            >
-                              <div>
-                                <span className="navigation navigation--primary">
-                                  About us
-                                </span>
-                                <span className="navigation navigation--alt"></span>
-                              </div>
-                              <div>
-                                <div className="mobile-nav__content">
-                                  <div className="mobile-nav__page-info">
-                                    <Link
-                                      href="/about-us/"
-                                      className="navigation__page-title"
-                                    >
-                                      <span className="navigation navigation--primary">
-                                        About us
-                                      </span>
-                                      <span className="navigation navigation--alt"></span>
-                                      <span
-                                        className="navigation__arrow"
-                                        role="presentation"
-                                      >
-                                        <svg
-                                          aria-hidden="true"
-                                          focusable="false"
-                                          viewBox="0 0 23 17"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                          <path d="m14.635 16.255 7.944-7.15a.812.812 0 0 0 .278-.605.813.813 0 0 0-.278-.605L14.635.748A.99.99 0 0 0 13.97.5c-.245 0-.49.085-.676.252a.793.793 0 0 0-.005 1.206l6.322 5.685H.952C.427 7.643 0 8.027 0 8.5s.427.857.952.857h18.66l-6.324 5.686a.793.793 0 0 0 .007 1.204c.188.169.434.253.677.253.242 0 .48-.082.663-.245Z" />
-                                        </svg>
-                                      </span>
-                                    </Link>
-                                  </div>
-
-                                  <nav className="mobile-nav__items mobile-nav__items">
-                                    <ul className="mobile-nav__links">
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          News centre
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          How we work
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Our strategies and programmes
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          International cooperation
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Information for industry, embassies
-                                          and consulates
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Research and statistics
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          About this site
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Glossary
-                                        </Link>
-                                      </li>
-
-                                      <li className="mobile-nav__item--sub-nav">
-                                        <Link
-                                          className="navigation navigation--child-link"
-                                          href="#"
-                                          data-disabled="true"
-                                        >
-                                          Immigration policy and law
-                                        </Link>
-                                      </li>
-                                    </ul>
-                                  </nav>
-                                </div>
-                              </div>
-                            </div>
-                          </ul>
-                        </nav>
-
-                        <nav
-                          className="quicklinks"
-                          aria-label="Mobile navigation quick links"
-                        >
-                          <ul className="quicklinks__items">
-                            <li className="quicklinks__item">
-                              <Link
-                                className="quicklinks__link"
-                                href="/process-to-apply/"
-                              >
-                                Process to apply
-                              </Link>
-                            </li>
-
-                            <li className="quicklinks__item">
-                              <Link
-                                className="quicklinks__link"
-                                href="/work/for-employers/"
-                              >
-                                For employers
-                              </Link>
-                            </li>
-                          </ul>
-                          <span id="mobile-menu-login">
-                            <button
-                              className="modal__button--wrapper"
-                              aria-label="Open login modal"
-                              aria-controls="modal-login"
-                              data-on-click="handleLoginOpenButtonClick"
-                            >
-                              Login
-                            </button>
-                          </span>
-                        </nav>
-                      </div>
+                    <div style={{ padding: '20px' }}>
+                      <button
+                        onClick={() => { setIsMobileMenuOpen(false); setIsLoginModalOpen(true); }}
+                        style={{ backgroundColor: '#c60c46', color: '#fff', border: 'none', padding: '12px 28px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer', borderRadius: '4px' }}
+                      >
+                        Login
+                      </button>
                     </div>
                   </div>
                 </div>
