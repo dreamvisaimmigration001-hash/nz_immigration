@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import React from "react";
 import Link from "next/link";
+import CreateVisaButton from "./CreateVisaButton";
 
 export default async function UserVisasPage() {
   const session = await getServerSession(authOptions);
@@ -88,20 +89,7 @@ export default async function UserVisasPage() {
               </button>
             </div>
 
-            <Link href="/dashboard/aewv-visa" style={{ 
-              backgroundColor: "#c60c46", 
-              color: "#fff", 
-              textDecoration: "none",
-              padding: "12px 28px", 
-              fontWeight: "bold", 
-              fontSize: "14px", 
-              letterSpacing: "0.5px",
-              borderRadius: "2px",
-              whiteSpace: "nowrap",
-              display: "inline-block"
-            }}>
-              APPLY FOR A VISA
-            </Link>
+            <CreateVisaButton userId={userId} token={token} />
           </div>
 
           <div style={{ border: "1px solid #d1d5db", borderRadius: "2px", overflow: "hidden" }}>
@@ -114,6 +102,7 @@ export default async function UserVisasPage() {
                   <th style={tableHeaderStyle}>Date of Birth</th>
                   <th style={{...tableHeaderStyle, width: "28%"}}>Application type</th>
                   <th style={tableHeaderStyle}>Created on</th>
+                  <th style={{...tableHeaderStyle, textAlign: "right"}}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -132,6 +121,32 @@ export default async function UserVisasPage() {
                       <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString() : "N/A"}</td>
                       <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
                       <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString()}</td>
+                      <td style={{...tableCellStyle, textAlign: "right"}}>
+                        {(visa.documentUrl || (visa.document && visa.document.length > 0)) ? (
+                          <a 
+                            href={visa.documentUrl || visa.document[0].url} 
+                            download 
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              display: "inline-block",
+                              whiteSpace: "nowrap",
+                              color: "#0062a4",
+                              textDecoration: "none",
+                              fontWeight: "600",
+                              fontSize: "12px",
+                              backgroundColor: "#f0f9ff",
+                              padding: "4px 8px",
+                              borderRadius: "4px",
+                              border: "1px solid #bae6fd"
+                            }}
+                          >
+                            Download
+                          </a>
+                        ) : (
+                          <span style={{ color: "#9ca3af", fontSize: "12px", fontStyle: "italic" }}>No document</span>
+                        )}
+                      </td>
                     </tr>
                   ))
                 )}
@@ -179,6 +194,7 @@ export default async function UserVisasPage() {
                   <th style={{...tableHeaderStyle, width: "28%"}}>Application type</th>
                   <th style={tableHeaderStyle}>Submitted on</th>
                   <th style={tableHeaderStyle}>Status</th>
+                  <th style={{...tableHeaderStyle, textAlign: "right"}}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -201,6 +217,32 @@ export default async function UserVisasPage() {
                         <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>
                           {visa.status || "Submitted"}
                         </span>
+                      </td>
+                      <td style={{...tableCellStyle, textAlign: "right"}}>
+                        {(visa.documentUrl || (visa.document && visa.document.length > 0)) ? (
+                          <a 
+                            href={visa.documentUrl || visa.document[0].url} 
+                            download 
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              display: "inline-block",
+                              whiteSpace: "nowrap",
+                              color: "#0062a4",
+                              textDecoration: "none",
+                              fontWeight: "600",
+                              fontSize: "12px",
+                              backgroundColor: "#f0f9ff",
+                              padding: "4px 8px",
+                              borderRadius: "4px",
+                              border: "1px solid #bae6fd"
+                            }}
+                          >
+                            Download
+                          </a>
+                        ) : (
+                          <span style={{ color: "#9ca3af", fontSize: "12px", fontStyle: "italic" }}>No document</span>
+                        )}
                       </td>
                     </tr>
                   ))

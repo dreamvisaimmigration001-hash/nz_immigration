@@ -30,6 +30,8 @@ export default function VisasManagementPage() {
   const [newDateOfBirth, setNewDateOfBirth] = useState("");
   const [newVisaType, setNewVisaType] = useState("Visitor Visa");
   const [newStatus, setNewStatus] = useState("Draft");
+  const [newDocument, setNewDocument] = useState<string>("");
+  const [newDocumentName, setNewDocumentName] = useState<string>("");
 
   // Edit Form State
   const [editVisaId, setEditVisaId] = useState<string | null>(null);
@@ -40,6 +42,17 @@ export default function VisasManagementPage() {
   const [editDateOfBirth, setEditDateOfBirth] = useState("");
   const [editVisaType, setEditVisaType] = useState("Visitor Visa");
   const [editStatus, setEditStatus] = useState("Draft");
+  const [editDocument, setEditDocument] = useState<string>("");
+  const [editDocumentName, setEditDocumentName] = useState<string>("");
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   const fetchVisas = async () => {
     if (!token) return;
@@ -85,21 +98,27 @@ export default function VisasManagementPage() {
 
   const handleCreateVisa = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload: any = {
+      userId: newUserId === "" ? undefined : newUserId,
+      fullName: newFullName,
+      documentNumber: newPassportNumber,
+      nationality: newNationality,
+      dateOfBirth: newDateOfBirth,
+      visaType: newVisaType,
+      status: newStatus
+    };
+    if (newDocument && newDocumentName) {
+      payload.document = newDocument;
+      payload.documentName = newDocumentName;
+    }
+
     const res = await fetch(`${API_URL}/api/visas?origin=nz`, {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({
-        userId: newUserId === "" ? undefined : newUserId,
-        fullName: newFullName,
-        documentNumber: newPassportNumber,
-        nationality: newNationality,
-        dateOfBirth: newDateOfBirth,
-        visaType: newVisaType,
-        status: newStatus
-      }),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       setNewUserId("");
@@ -109,6 +128,8 @@ export default function VisasManagementPage() {
       setNewDateOfBirth("");
       setNewVisaType("Visitor Visa");
       setNewStatus("Draft");
+      setNewDocument("");
+      setNewDocumentName("");
       setIsCreateModalOpen(false);
       fetchVisas();
     } else {
@@ -129,24 +150,32 @@ export default function VisasManagementPage() {
 
   const handleEditVisa = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload: any = {
+      userId: editUserId === "" ? null : editUserId,
+      fullName: editFullName,
+      documentNumber: editPassportNumber,
+      nationality: editNationality,
+      dateOfBirth: editDateOfBirth,
+      visaType: editVisaType,
+      status: editStatus,
+    };
+    if (editDocument && editDocumentName) {
+      payload.document = editDocument;
+      payload.documentName = editDocumentName;
+    }
+
     const res = await fetch(`${API_URL}/api/visas/${editVisaId}?origin=nz`, {
       method: "PATCH",
       headers: { 
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({
-        userId: editUserId === "" ? null : editUserId,
-        fullName: editFullName,
-        documentNumber: editPassportNumber,
-        nationality: editNationality,
-        dateOfBirth: editDateOfBirth,
-        visaType: editVisaType,
-        status: editStatus,
-      }),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       setEditVisaId(null);
+      setEditDocument("");
+      setEditDocumentName("");
       fetchVisas();
     } else {
       alert("Error updating visa");
@@ -402,6 +431,7 @@ export default function VisasManagementPage() {
                     <option value="Visitor Visa">Visitor Visa</option>
                     <option value="Student Visa">Student Visa</option>
                     <option value="Accredited Employer Work Visa">Accredited Employer Work Visa</option>
+                    <option value="Specific Purpose Work Visa">Specific Purpose Work Visa</option>
                     <option value="Resident Visa">Resident Visa</option>
                   </select>
                 </div>
@@ -416,6 +446,25 @@ export default function VisasManagementPage() {
                   <option value="Approved">Approved</option>
                   <option value="Declined">Declined</option>
                 </select>
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Upload Visa Document</label>
+                <input 
+                  type="file" 
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setNewDocumentName(file.name);
+                      const base64 = await fileToBase64(file);
+                      setNewDocument(base64);
+                    } else {
+                      setNewDocumentName("");
+                      setNewDocument("");
+                    }
+                  }} 
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none", backgroundColor: "#fff" }} 
+                />
               </div>
 
               <div style={{ display: "flex", gap: "10px", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #f3f4f6" }}>
@@ -472,6 +521,7 @@ export default function VisasManagementPage() {
                     <option value="Visitor Visa">Visitor Visa</option>
                     <option value="Student Visa">Student Visa</option>
                     <option value="Accredited Employer Work Visa">Accredited Employer Work Visa</option>
+                    <option value="Specific Purpose Work Visa">Specific Purpose Work Visa</option>
                     <option value="Resident Visa">Resident Visa</option>
                   </select>
                 </div>
@@ -486,6 +536,25 @@ export default function VisasManagementPage() {
                   <option value="Approved">Approved</option>
                   <option value="Declined">Declined</option>
                 </select>
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Upload Visa Document (Replaces existing)</label>
+                <input 
+                  type="file" 
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setEditDocumentName(file.name);
+                      const base64 = await fileToBase64(file);
+                      setEditDocument(base64);
+                    } else {
+                      setEditDocumentName("");
+                      setEditDocument("");
+                    }
+                  }} 
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none", backgroundColor: "#fff" }} 
+                />
               </div>
 
               <div style={{ display: "flex", gap: "10px", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #f3f4f6" }}>
