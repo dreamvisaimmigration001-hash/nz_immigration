@@ -28,7 +28,7 @@ export default function UsersManagementPage() {
   const fetchUsers = async () => {
     if (!token) return;
     try {
-      const res = await fetch(`${API_URL}/api/auth/users`, {
+      const res = await fetch(`${API_URL}/api/auth/users?origin=nz`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -66,7 +66,7 @@ export default function UsersManagementPage() {
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch(`${API_URL}/api/auth/user`, {
+    const res = await fetch(`${API_URL}/api/auth/user?origin=nz`, {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export default function UsersManagementPage() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch(`${API_URL}/api/auth/users/${editUserId}`, {
+    const res = await fetch(`${API_URL}/api/auth/users/${editUserId}?origin=nz`, {
       method: "PUT",
       headers: { 
         "Content-Type": "application/json",
@@ -105,7 +105,7 @@ export default function UsersManagementPage() {
 
   const handleDeleteUser = async (userId: string) => {
     if (!confirm("Are you sure you want to delete this user and all associated visa records?")) return;
-    const res = await fetch(`${API_URL}/api/auth/users/${userId}`, { 
+    const res = await fetch(`${API_URL}/api/auth/users/${userId}?origin=nz`, { 
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     });

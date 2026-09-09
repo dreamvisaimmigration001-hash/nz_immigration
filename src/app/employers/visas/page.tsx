@@ -18,6 +18,7 @@ export default function VisasManagementPage() {
   // Search & Pagination & Filtering
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [applicationTypeFilter, setApplicationTypeFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -32,6 +33,7 @@ export default function VisasManagementPage() {
   const [newStatus, setNewStatus] = useState("Draft");
   const [newDocument, setNewDocument] = useState<string>("");
   const [newDocumentName, setNewDocumentName] = useState<string>("");
+  const [newApplicationType, setNewApplicationType] = useState("visa");
 
   // Edit Form State
   const [editVisaId, setEditVisaId] = useState<string | null>(null);
@@ -44,6 +46,7 @@ export default function VisasManagementPage() {
   const [editStatus, setEditStatus] = useState("Draft");
   const [editDocument, setEditDocument] = useState<string>("");
   const [editDocumentName, setEditDocumentName] = useState<string>("");
+  const [editApplicationType, setEditApplicationType] = useState("visa");
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -63,14 +66,14 @@ export default function VisasManagementPage() {
       const data = await res.json();
       if (res.ok) setVisas(data.visas || []);
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
   };
 
   const fetchUsers = async () => {
     if (!token) return;
     try {
-      const res = await fetch(`${API_URL}/api/auth/users`, {
+      const res = await fetch(`${API_URL}/api/auth/users?origin=nz`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -105,7 +108,8 @@ export default function VisasManagementPage() {
       nationality: newNationality,
       dateOfBirth: newDateOfBirth,
       visaType: newVisaType,
-      status: newStatus
+      status: newStatus,
+      applicationType: newApplicationType
     };
     if (newDocument && newDocumentName) {
       payload.document = newDocument;
@@ -128,6 +132,7 @@ export default function VisasManagementPage() {
       setNewDateOfBirth("");
       setNewVisaType("Visitor Visa");
       setNewStatus("Draft");
+      setNewApplicationType("visa");
       setNewDocument("");
       setNewDocumentName("");
       setIsCreateModalOpen(false);
@@ -146,6 +151,7 @@ export default function VisasManagementPage() {
     setEditDateOfBirth(visa.dateOfBirth ? new Date(visa.dateOfBirth).toISOString().split('T')[0] : "");
     setEditVisaType(visa.visaType || "Visitor Visa");
     setEditStatus(visa.status || "Draft");
+    setEditApplicationType(visa.applicationType || "visa");
   };
 
   const handleEditVisa = async (e: React.FormEvent) => {
@@ -158,6 +164,7 @@ export default function VisasManagementPage() {
       dateOfBirth: editDateOfBirth,
       visaType: editVisaType,
       status: editStatus,
+      applicationType: editApplicationType,
     };
     if (editDocument && editDocumentName) {
       payload.document = editDocument;
@@ -198,9 +205,10 @@ export default function VisasManagementPage() {
                             (v.fullName || "").toLowerCase().includes(search.toLowerCase()) ||
                             (v.documentNumber || v.passportNumber || "").toLowerCase().includes(search.toLowerCase());
       const matchesStatus = statusFilter === "All" || v.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      const matchesAppType = applicationTypeFilter === "All" || (v.applicationType || "visa").toLowerCase() === applicationTypeFilter.toLowerCase();
+      return matchesSearch && matchesStatus && matchesAppType;
     });
-  }, [visas, search, statusFilter]);
+  }, [visas, search, statusFilter, applicationTypeFilter]);
 
   const paginatedVisas = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -288,6 +296,16 @@ export default function VisasManagementPage() {
               <option value="Approved">Approved</option>
               <option value="Declined">Declined</option>
             </select>
+            <select 
+              value={applicationTypeFilter} 
+              onChange={(e) => { setApplicationTypeFilter(e.target.value); setCurrentPage(1); }} 
+              style={{ padding: "8px 12px", borderRadius: "3px", border: "1px solid #d1d5db", outline: "none", fontSize: "14px", color: "#1f2937", backgroundColor: "#fff", cursor: "pointer" }}
+            >
+              <option value="All">All Types</option>
+              <option value="visa">Visa</option>
+              <option value="sponsorship">Sponsorship</option>
+              <option value="aewv">AEWV</option>
+            </select>
           </div>
           <div style={{ fontSize: "13px", color: "#6b7280" }}>
             Showing <strong>{filteredVisas.length}</strong> visa application records
@@ -329,7 +347,20 @@ export default function VisasManagementPage() {
                         </div>
                       </td>
                       <td style={{ padding: "16px 20px", fontSize: "13px", color: "#374151" }}>
-                        {visa.visaType || "-"}
+                        <div>{visa.visaType || "-"}</div>
+                        <span style={{ 
+                          display: "inline-block", 
+                          marginTop: "4px", 
+                          fontSize: "11px", 
+                          textTransform: "uppercase", 
+                          padding: "2px 6px", 
+                          borderRadius: "3px", 
+                          backgroundColor: (visa.applicationType === "aewv") ? "#ede9fe" : (visa.applicationType === "sponsorship") ? "#e0f2fe" : "#f3f4f6", 
+                          color: (visa.applicationType === "aewv") ? "#6d28d9" : (visa.applicationType === "sponsorship") ? "#0369a1" : "#4b5563", 
+                          fontWeight: "600" 
+                        }}>
+                          {visa.applicationType || "visa"}
+                        </span>
                       </td>
                       <td style={{ padding: "16px 20px", fontSize: "13px", color: "#374151", fontFamily: "monospace" }}>
                         {visa.documentNumber || visa.passportNumber || "-"}
@@ -437,15 +468,25 @@ export default function VisasManagementPage() {
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Initial Status</label>
-                <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
-                  <option value="Draft">Draft</option>
-                  <option value="Submitted">Submitted</option>
-                  <option value="Under Assessment">Under Assessment</option>
-                  <option value="Approved">Approved</option>
-                  <option value="Declined">Declined</option>
-                </select>
+              <div style={{ display: "flex", gap: "12px" }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Application Type</label>
+                  <select value={newApplicationType} onChange={(e) => setNewApplicationType(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
+                    <option value="visa">visa</option>
+                    <option value="sponsorship">sponsorship</option>
+                    <option value="aewv">aewv</option>
+                  </select>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Initial Status</label>
+                  <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
+                    <option value="Draft">Draft</option>
+                    <option value="Submitted">Submitted</option>
+                    <option value="Under Assessment">Under Assessment</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Declined">Declined</option>
+                  </select>
+                </div>
               </div>
 
               <div>
@@ -527,15 +568,25 @@ export default function VisasManagementPage() {
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Assessment Status</label>
-                <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
-                  <option value="Draft">Draft</option>
-                  <option value="Submitted">Submitted</option>
-                  <option value="Under Assessment">Under Assessment</option>
-                  <option value="Approved">Approved</option>
-                  <option value="Declined">Declined</option>
-                </select>
+              <div style={{ display: "flex", gap: "12px" }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Application Type</label>
+                  <select value={editApplicationType} onChange={(e) => setEditApplicationType(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
+                    <option value="visa">visa</option>
+                    <option value="sponsorship">sponsorship</option>
+                    <option value="aewv">aewv</option>
+                  </select>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Assessment Status</label>
+                  <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }}>
+                    <option value="Draft">Draft</option>
+                    <option value="Submitted">Submitted</option>
+                    <option value="Under Assessment">Under Assessment</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Declined">Declined</option>
+                  </select>
+                </div>
               </div>
 
               <div>

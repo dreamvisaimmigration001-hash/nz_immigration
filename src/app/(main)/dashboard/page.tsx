@@ -35,7 +35,7 @@ export default async function UserDashboardPage() {
   }
 
   // Filter based on applicationType
-  const rawVisas = allData.filter((item: any) => item.applicationType === 'visa' || !item.applicationType);
+  const rawVisas = allData.filter((item: any) => item.applicationType === 'visa' || item.applicationType === 'aewv' || !item.applicationType);
   const sponsorships = allData.filter((item: any) => item.applicationType === 'sponsorship');
 
   const draftVisas = rawVisas.filter((v: any) => v.visaStatus === "Draft" || v.status === "Draft");

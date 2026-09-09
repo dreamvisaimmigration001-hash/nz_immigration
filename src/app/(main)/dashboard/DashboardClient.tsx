@@ -233,14 +233,15 @@ export default function DashboardClient({
                       <th style={tableHeaderStyle}>Passport Number</th>
                       <th style={tableHeaderStyle}>Nationality</th>
                       <th style={tableHeaderStyle}>Date of Birth</th>
-                      <th style={{ ...tableHeaderStyle, width: "25%" }}>Application type</th>
+                      <th style={{ ...tableHeaderStyle, width: "22%" }}>Application type</th>
                       <th style={tableHeaderStyle}>Created on</th>
+                      <th style={{ ...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "130px" }}>Options</th>
                     </tr>
                   </thead>
                   <tbody>
                     {draftVisas.length === 0 ? (
                       <tr>
-                        <td colSpan={4} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
+                        <td colSpan={7} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
                           No draft applications.
                         </td>
                       </tr>
@@ -251,8 +252,23 @@ export default function DashboardClient({
                           <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
                           <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
                           <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
-                          <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
+                          <td style={tableCellStyle}>
+                            <div>{visa.visaType || (visa.applicationType === "aewv" ? "Accredited Employer Work Visa" : "Visa Application")}</div>
+                            {visa.applicationType === "aewv" && (
+                              <span style={{ display: "inline-block", marginTop: "4px", fontSize: "11px", textTransform: "uppercase", padding: "2px 6px", borderRadius: "3px", backgroundColor: "#ede9fe", color: "#6d28d9", fontWeight: "600" }}>
+                                AEWV
+                              </span>
+                            )}
+                          </td>
                           <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString('en-GB')}</td>
+                          <td style={{ ...tableCellStyle, borderRight: "none", textAlign: "center" }}>
+                            <Link
+                              href={`/dashboard/aewv-visa?id=${visa._id}`}
+                              style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "7px 16px", textDecoration: "none", fontWeight: "600", fontSize: "13px", borderRadius: "2px", display: "inline-block" }}
+                            >
+                              Continue
+                            </Link>
+                          </td>
                         </tr>
                       ))
                     )}
@@ -272,14 +288,15 @@ export default function DashboardClient({
                       <th style={tableHeaderStyle}>Passport Number</th>
                       <th style={tableHeaderStyle}>Nationality</th>
                       <th style={tableHeaderStyle}>Date of Birth</th>
-                      <th style={{ ...tableHeaderStyle, width: "25%" }}>Application type</th>
+                      <th style={{ ...tableHeaderStyle, width: "22%" }}>Application type</th>
                       <th style={tableHeaderStyle}>Status</th>
+                      <th style={{ ...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "130px" }}>Options</th>
                     </tr>
                   </thead>
                   <tbody>
                     {submittedVisas.length === 0 ? (
                       <tr>
-                        <td colSpan={4} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
+                        <td colSpan={7} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
                           No submitted applications.
                         </td>
                       </tr>
@@ -290,11 +307,26 @@ export default function DashboardClient({
                           <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
                           <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
                           <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
-                          <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
+                          <td style={tableCellStyle}>
+                            <div>{visa.visaType || (visa.applicationType === "aewv" ? "Accredited Employer Work Visa" : "Visa Application")}</div>
+                            {visa.applicationType === "aewv" && (
+                              <span style={{ display: "inline-block", marginTop: "4px", fontSize: "11px", textTransform: "uppercase", padding: "2px 6px", borderRadius: "3px", backgroundColor: "#ede9fe", color: "#6d28d9", fontWeight: "600" }}>
+                                AEWV
+                              </span>
+                            )}
+                          </td>
                           <td style={tableCellStyle}>
                             <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>
                               {visa.status || "Submitted"}
                             </span>
+                          </td>
+                          <td style={{ ...tableCellStyle, borderRight: "none", textAlign: "center" }}>
+                            <Link
+                              href={`/dashboard/aewv-visa?id=${visa._id}`}
+                              style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "7px 16px", fontWeight: "600", fontSize: "13px", textDecoration: "none", borderRadius: "2px", display: "inline-block" }}
+                            >
+                              View
+                            </Link>
                           </td>
                         </tr>
                       ))

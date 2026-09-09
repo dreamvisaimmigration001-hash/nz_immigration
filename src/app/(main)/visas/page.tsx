@@ -33,7 +33,7 @@ export default async function UserVisasPage() {
     console.error("Failed to fetch visas", e);
   }
 
-  const visas = allData.filter((item: any) => item.applicationType === 'visa' || !item.applicationType);
+  const visas = allData.filter((item: any) => item.applicationType === 'visa' || item.applicationType === 'aewv' || !item.applicationType);
   const draftVisas = visas.filter((v: any) => v.status === "Draft" || v.visaStatus === "Draft");
   const submittedVisas = visas.filter((v: any) => v.status !== "Draft" && v.visaStatus !== "Draft");
 
@@ -108,7 +108,7 @@ export default async function UserVisasPage() {
               <tbody>
                 {draftVisas.length === 0 ? (
                   <tr>
-                    <td colSpan={4} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
+                    <td colSpan={7} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
                       No draft applications.
                     </td>
                   </tr>
@@ -119,33 +119,46 @@ export default async function UserVisasPage() {
                       <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
                       <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
                       <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
-                      <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
+                      <td style={tableCellStyle}>
+                        <div>{visa.visaType || (visa.applicationType === "aewv" ? "Accredited Employer Work Visa" : "Visa Application")}</div>
+                        {visa.applicationType === "aewv" && (
+                          <span style={{ display: "inline-block", marginTop: "4px", fontSize: "11px", textTransform: "uppercase", padding: "2px 6px", borderRadius: "3px", backgroundColor: "#ede9fe", color: "#6d28d9", fontWeight: "600" }}>
+                            AEWV
+                          </span>
+                        )}
+                      </td>
                       <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString('en-GB')}</td>
                       <td style={{...tableCellStyle, textAlign: "right"}}>
-                        {(visa.documentUrl || (visa.document && visa.document.length > 0)) ? (
-                          <a 
-                            href={visa.documentUrl || visa.document[0].url} 
-                            download 
-                            target="_blank"
-                            rel="noreferrer"
-                            style={{
-                              display: "inline-block",
-                              whiteSpace: "nowrap",
-                              color: "#0062a4",
-                              textDecoration: "none",
-                              fontWeight: "600",
-                              fontSize: "12px",
-                              backgroundColor: "#f0f9ff",
-                              padding: "4px 8px",
-                              borderRadius: "4px",
-                              border: "1px solid #bae6fd"
-                            }}
+                        <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", alignItems: "center" }}>
+                          <Link 
+                            href={`/dashboard/aewv-visa?id=${visa._id}`}
+                            style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "6px 14px", textDecoration: "none", fontWeight: "600", fontSize: "12px", borderRadius: "2px", display: "inline-block" }}
                           >
-                            Download
-                          </a>
-                        ) : (
-                          <span style={{ color: "#9ca3af", fontSize: "12px", fontStyle: "italic" }}>No document</span>
-                        )}
+                            Continue
+                          </Link>
+                          {(visa.documentUrl || (visa.document && visa.document.length > 0)) && (
+                            <a 
+                              href={visa.documentUrl || visa.document[0].url} 
+                              download 
+                              target="_blank"
+                              rel="noreferrer"
+                              style={{
+                                display: "inline-block",
+                                whiteSpace: "nowrap",
+                                color: "#0062a4",
+                                textDecoration: "none",
+                                fontWeight: "600",
+                                fontSize: "12px",
+                                backgroundColor: "#f0f9ff",
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                border: "1px solid #bae6fd"
+                              }}
+                            >
+                              Download
+                            </a>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -200,7 +213,7 @@ export default async function UserVisasPage() {
               <tbody>
                 {submittedVisas.length === 0 ? (
                   <tr>
-                    <td colSpan={5} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
+                    <td colSpan={8} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
                       No submitted applications.
                     </td>
                   </tr>
@@ -211,7 +224,14 @@ export default async function UserVisasPage() {
                       <td style={tableCellStyle}>{visa.documentNumber || "N/A"}</td>
                       <td style={tableCellStyle}>{visa.nationality || "N/A"}</td>
                       <td style={tableCellStyle}>{visa.dateOfBirth ? new Date(visa.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
-                      <td style={tableCellStyle}>{visa.visaType || "Visa Application"}</td>
+                      <td style={tableCellStyle}>
+                        <div>{visa.visaType || (visa.applicationType === "aewv" ? "Accredited Employer Work Visa" : "Visa Application")}</div>
+                        {visa.applicationType === "aewv" && (
+                          <span style={{ display: "inline-block", marginTop: "4px", fontSize: "11px", textTransform: "uppercase", padding: "2px 6px", borderRadius: "3px", backgroundColor: "#ede9fe", color: "#6d28d9", fontWeight: "600" }}>
+                            AEWV
+                          </span>
+                        )}
+                      </td>
                       <td style={tableCellStyle}>{visa.submittedAt ? new Date(visa.submittedAt).toLocaleDateString('en-GB') : new Date(visa.createdAt).toLocaleDateString('en-GB')}</td>
                       <td style={tableCellStyle}>
                         <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>
@@ -219,30 +239,36 @@ export default async function UserVisasPage() {
                         </span>
                       </td>
                       <td style={{...tableCellStyle, textAlign: "right"}}>
-                        {(visa.documentUrl || (visa.document && visa.document.length > 0)) ? (
-                          <a 
-                            href={visa.documentUrl || visa.document[0].url} 
-                            download 
-                            target="_blank"
-                            rel="noreferrer"
-                            style={{
-                              display: "inline-block",
-                              whiteSpace: "nowrap",
-                              color: "#0062a4",
-                              textDecoration: "none",
-                              fontWeight: "600",
-                              fontSize: "12px",
-                              backgroundColor: "#f0f9ff",
-                              padding: "4px 8px",
-                              borderRadius: "4px",
-                              border: "1px solid #bae6fd"
-                            }}
+                        <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", alignItems: "center" }}>
+                          <Link
+                            href={`/dashboard/aewv-visa?id=${visa._id}`}
+                            style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "6px 14px", fontWeight: "600", fontSize: "12px", textDecoration: "none", borderRadius: "2px", display: "inline-block" }}
                           >
-                            Download
-                          </a>
-                        ) : (
-                          <span style={{ color: "#9ca3af", fontSize: "12px", fontStyle: "italic" }}>No document</span>
-                        )}
+                            View
+                          </Link>
+                          {(visa.documentUrl || (visa.document && visa.document.length > 0)) && (
+                            <a 
+                              href={visa.documentUrl || visa.document[0].url} 
+                              download 
+                              target="_blank"
+                              rel="noreferrer"
+                              style={{
+                                display: "inline-block",
+                                whiteSpace: "nowrap",
+                                color: "#0062a4",
+                                textDecoration: "none",
+                                fontWeight: "600",
+                                fontSize: "12px",
+                                backgroundColor: "#f0f9ff",
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                border: "1px solid #bae6fd"
+                              }}
+                            >
+                              Download
+                            </a>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))

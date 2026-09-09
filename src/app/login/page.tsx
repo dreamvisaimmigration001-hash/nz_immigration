@@ -36,12 +36,10 @@ export default function LoginPage() {
       setIsLoading(false);
     } else {
       const session = await getSession();
-      if (session?.user && (session.user as any).role === "employee") {
-        router.push("/employers");
-      } else {
-        router.push("/dashboard");
-      }
-      router.refresh();
+      const target = session?.user && (session.user as any).role === "employee"
+        ? "/employers"
+        : "/dashboard";
+      window.location.href = target;
     }
   };
 

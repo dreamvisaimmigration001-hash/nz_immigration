@@ -35,7 +35,7 @@ export default function EmployeesManagementPage() {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/auth/employe`, {
+      const res = await fetch(`${API_URL}/api/auth/employe?origin=nz`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

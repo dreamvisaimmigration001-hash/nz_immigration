@@ -30,7 +30,7 @@ export default function RootLayout({
       lang="en-NZ"
       className={`${firaSans.variable} font-sans antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white text-[#1E222C]" data-pagetype="HomePage" id="app">
+      <body className="min-h-full flex flex-col bg-white text-[#1E222C]" data-pagetype="HomePage" id="app" suppressHydrationWarning>
         <Providers>
           {children}
         </Providers>
