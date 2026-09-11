@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import DocumentDownloadButton from "@/components/DocumentDownloadButton";
+import { getEmployerName, formatValidity } from "@/lib/sponsorshipUtils";
 
 interface DashboardClientProps {
   user: any;
@@ -365,18 +367,20 @@ export default function DashboardClient({
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
-                    <th style={{ ...tableHeaderStyle, width: "30%" }}>Type</th>
+                    <th style={{ ...tableHeaderStyle, width: "22%" }}>Type</th>
                     <th style={tableHeaderStyle}>Employer</th>
                     <th style={tableHeaderStyle}>Passport Number</th>
                     <th style={tableHeaderStyle}>Nationality</th>
                     <th style={tableHeaderStyle}>Date of Birth</th>
+                    <th style={tableHeaderStyle}>Validity</th>
                     <th style={tableHeaderStyle}>Status</th>
+                    <th style={{ ...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "130px" }}>Options</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sponsorships.length === 0 ? (
                     <tr>
-                      <td colSpan={4} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
+                      <td colSpan={8} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
                         No sponsorship records found.
                       </td>
                     </tr>
@@ -384,10 +388,11 @@ export default function DashboardClient({
                     sponsorships.map((sponsorship: any, index: number) => (
                       <tr key={sponsorship._id} style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
                         <td style={{ ...tableCellStyle, fontWeight: "600" }}>{sponsorship.type || "Employer Accreditation"}</td>
-                        <td style={tableCellStyle}>{sponsorship.employer || "Unspecified"}</td>
+                        <td style={tableCellStyle}>{getEmployerName(sponsorship)}</td>
                         <td style={tableCellStyle}>{sponsorship.documentNumber || "N/A"}</td>
                         <td style={tableCellStyle}>{sponsorship.nationality || "N/A"}</td>
                         <td style={tableCellStyle}>{sponsorship.dateOfBirth ? new Date(sponsorship.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
+                        <td style={tableCellStyle}>{formatValidity(sponsorship)}</td>
                         <td style={tableCellStyle}>
                           <span style={{
                             display: "inline-block",
@@ -400,6 +405,9 @@ export default function DashboardClient({
                           }}>
                             {sponsorship.status || "Active"}
                           </span>
+                        </td>
+                        <td style={{ ...tableCellStyle, borderRight: "none", textAlign: "center" }}>
+                          <DocumentDownloadButton item={sponsorship} />
                         </td>
                       </tr>
                     ))

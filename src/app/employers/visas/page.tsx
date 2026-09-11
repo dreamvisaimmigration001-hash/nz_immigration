@@ -34,6 +34,8 @@ export default function VisasManagementPage() {
   const [newDocument, setNewDocument] = useState<string>("");
   const [newDocumentName, setNewDocumentName] = useState<string>("");
   const [newApplicationType, setNewApplicationType] = useState("visa");
+  const [newValidUntil, setNewValidUntil] = useState("");
+  const [newEmployer, setNewEmployer] = useState("");
 
   // Edit Form State
   const [editVisaId, setEditVisaId] = useState<string | null>(null);
@@ -47,6 +49,8 @@ export default function VisasManagementPage() {
   const [editDocument, setEditDocument] = useState<string>("");
   const [editDocumentName, setEditDocumentName] = useState<string>("");
   const [editApplicationType, setEditApplicationType] = useState("visa");
+  const [editValidUntil, setEditValidUntil] = useState("");
+  const [editEmployer, setEditEmployer] = useState("");
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -109,7 +113,11 @@ export default function VisasManagementPage() {
       dateOfBirth: newDateOfBirth,
       visaType: newVisaType,
       status: newStatus,
-      applicationType: newApplicationType
+      applicationType: newApplicationType,
+      validUntil: newValidUntil || undefined,
+      validity: newValidUntil || undefined,
+      employer: newEmployer || undefined,
+      employerName: newEmployer || undefined,
     };
     if (newDocument && newDocumentName) {
       payload.document = newDocument;
@@ -133,6 +141,8 @@ export default function VisasManagementPage() {
       setNewVisaType("Visitor Visa");
       setNewStatus("Draft");
       setNewApplicationType("visa");
+      setNewValidUntil("");
+      setNewEmployer("");
       setNewDocument("");
       setNewDocumentName("");
       setIsCreateModalOpen(false);
@@ -152,6 +162,8 @@ export default function VisasManagementPage() {
     setEditVisaType(visa.visaType || "Visitor Visa");
     setEditStatus(visa.status || "Draft");
     setEditApplicationType(visa.applicationType || "visa");
+    setEditValidUntil(visa.validUntil ? new Date(visa.validUntil).toISOString().split('T')[0] : (visa.validity || ""));
+    setEditEmployer(visa.employer || visa.employerName || "");
   };
 
   const handleEditVisa = async (e: React.FormEvent) => {
@@ -165,6 +177,10 @@ export default function VisasManagementPage() {
       visaType: editVisaType,
       status: editStatus,
       applicationType: editApplicationType,
+      validUntil: editValidUntil || null,
+      validity: editValidUntil || null,
+      employer: editEmployer || null,
+      employerName: editEmployer || null,
     };
     if (editDocument && editDocumentName) {
       payload.document = editDocument;
@@ -181,6 +197,8 @@ export default function VisasManagementPage() {
     });
     if (res.ok) {
       setEditVisaId(null);
+      setEditValidUntil("");
+      setEditEmployer("");
       setEditDocument("");
       setEditDocumentName("");
       fetchVisas();
@@ -345,6 +363,11 @@ export default function VisasManagementPage() {
                         <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "2px" }}>
                           Account: {visa.userId ? (visa.userId.username || "Linked") : "Unassigned"}
                         </div>
+                        {(visa.employer || visa.employerName) && (
+                          <div style={{ fontSize: "12px", color: "#0062a4", marginTop: "2px", fontWeight: "500" }}>
+                            Employer: {visa.employer || visa.employerName}
+                          </div>
+                        )}
                       </td>
                       <td style={{ padding: "16px 20px", fontSize: "13px", color: "#374151" }}>
                         <div>{visa.visaType || "-"}</div>
@@ -361,6 +384,11 @@ export default function VisasManagementPage() {
                         }}>
                           {visa.applicationType || "visa"}
                         </span>
+                        {(visa.validUntil || visa.validity) && (
+                          <div style={{ fontSize: "11px", color: "#6b7280", marginTop: "3px" }}>
+                            Validity: {new Date(visa.validUntil || visa.validity).toLocaleDateString('en-GB')}
+                          </div>
+                        )}
                       </td>
                       <td style={{ padding: "16px 20px", fontSize: "13px", color: "#374151", fontFamily: "monospace" }}>
                         {visa.documentNumber || visa.passportNumber || "-"}
@@ -490,6 +518,27 @@ export default function VisasManagementPage() {
               </div>
 
               <div>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Employer / Company Name</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. Acme Corporation" 
+                  value={newEmployer} 
+                  onChange={(e) => setNewEmployer(e.target.value)} 
+                  style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} 
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Validity / Valid Until Date</label>
+                <input 
+                  type="date" 
+                  value={newValidUntil} 
+                  onChange={(e) => setNewValidUntil(e.target.value)} 
+                  style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} 
+                />
+              </div>
+
+              <div>
                 <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Upload Visa Document</label>
                 <input 
                   type="file" 
@@ -587,6 +636,27 @@ export default function VisasManagementPage() {
                     <option value="Declined">Declined</option>
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Employer / Company Name</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. Acme Corporation" 
+                  value={editEmployer} 
+                  onChange={(e) => setEditEmployer(e.target.value)} 
+                  style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} 
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#374151" }}>Validity / Valid Until Date</label>
+                <input 
+                  type="date" 
+                  value={editValidUntil} 
+                  onChange={(e) => setEditValidUntil(e.target.value)} 
+                  style={{ width: "100%", padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "3px", fontSize: "14px", color: "#1f2937", outline: "none" }} 
+                />
               </div>
 
               <div>

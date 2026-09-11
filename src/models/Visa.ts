@@ -10,6 +10,10 @@ export interface IVisa extends Document {
   status: string;
   createdAt: Date;
   submittedAt?: Date;
+  validUntil?: Date;
+  validity?: string;
+  employer?: string;
+  employerName?: string;
 }
 
 const VisaSchema: Schema<IVisa> = new Schema({
@@ -22,6 +26,10 @@ const VisaSchema: Schema<IVisa> = new Schema({
   status: { type: String, default: "Draft" },
   createdAt: { type: Date, default: Date.now },
   submittedAt: { type: Date },
+  validUntil: { type: Date },
+  validity: { type: String },
+  employer: { type: String, default: "" },
+  employerName: { type: String, default: "" },
 });
 
 export const Visa: Model<IVisa> = mongoose.models.Visa || mongoose.model<IVisa>("Visa", VisaSchema);

@@ -3,6 +3,8 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import React from "react";
 import Link from "next/link";
+import DocumentDownloadButton from "@/components/DocumentDownloadButton";
+import { getEmployerName, formatValidity } from "@/lib/sponsorshipUtils";
 
 export default async function UserSponsorshipsPage() {
   const session = await getServerSession(authOptions);
@@ -103,19 +105,20 @@ export default async function UserSponsorshipsPage() {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
-                  <th style={{...tableHeaderStyle, width: "28%"}}>Type</th>
+                  <th style={{...tableHeaderStyle, width: "22%"}}>Type</th>
                   <th style={tableHeaderStyle}>Employer</th>
                   <th style={tableHeaderStyle}>Passport Number</th>
                   <th style={tableHeaderStyle}>Nationality</th>
                   <th style={tableHeaderStyle}>Date of Birth</th>
                   <th style={tableHeaderStyle}>Validity</th>
                   <th style={tableHeaderStyle}>Status</th>
+                  <th style={{...tableHeaderStyle, borderRight: "none", textAlign: "center", width: "130px"}}>Options</th>
                 </tr>
               </thead>
               <tbody>
                 {sponsorships.length === 0 ? (
                   <tr>
-                    <td colSpan={5} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
+                    <td colSpan={8} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
                       You have no sponsorship records.
                     </td>
                   </tr>
@@ -123,17 +126,20 @@ export default async function UserSponsorshipsPage() {
                   sponsorships.map((sponsorship: any, index: number) => (
                     <tr key={sponsorship._id} style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
                       <td style={{...tableCellStyle, fontWeight: "600"}}>{sponsorship.type || "Employer Accreditation"}</td>
-                      <td style={tableCellStyle}>{sponsorship.employer || "Unspecified"}</td>
+                      <td style={tableCellStyle}>{getEmployerName(sponsorship)}</td>
                       <td style={tableCellStyle}>{sponsorship.documentNumber || "N/A"}</td>
                       <td style={tableCellStyle}>{sponsorship.nationality || "N/A"}</td>
                       <td style={tableCellStyle}>{sponsorship.dateOfBirth ? new Date(sponsorship.dateOfBirth).toLocaleDateString('en-GB') : "N/A"}</td>
                       <td style={tableCellStyle}>
-                        {sponsorship.validUntil ? `Valid until ${new Date(sponsorship.validUntil).toLocaleDateString('en-GB')}` : "N/A"}
+                        {formatValidity(sponsorship)}
                       </td>
                       <td style={tableCellStyle}>
                         <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>
                           {sponsorship.status || "Active"}
                         </span>
+                      </td>
+                      <td style={{...tableCellStyle, borderRight: "none", textAlign: "center"}}>
+                        <DocumentDownloadButton item={sponsorship} />
                       </td>
                     </tr>
                   ))
