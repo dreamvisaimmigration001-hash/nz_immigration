@@ -27,6 +27,11 @@ export default function Navbar() {
     setActiveMenu(activeMenu === menuId ? null : menuId);
   };
 
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    window.location.href = "/login";
+  };
+
   if (pathname === "/login") {
     return null;
   }
@@ -171,7 +176,7 @@ export default function Navbar() {
                   className="modal__button--wrapper header-quicklinks__button"
                   aria-label="Open login modal"
                   aria-controls="modal-login"
-                  onClick={() => signOut({ callbackUrl: "/login" })}
+                  onClick={handleLogout}
                 >
                   LOG OUT
                 </button>

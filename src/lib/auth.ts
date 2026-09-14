@@ -49,6 +49,15 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs without forcing hardcoded baseUrl
+      if (url.startsWith("/")) return url;
+      // Allows callback URLs on the same origin
+      try {
+        if (new URL(url).origin === baseUrl) return url;
+      } catch {}
+      return baseUrl;
+    },
     async jwt({ token, user }: any) {
       if (user) {
         token.role = user.role;
