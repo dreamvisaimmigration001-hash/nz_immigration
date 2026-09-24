@@ -205,7 +205,6 @@ export default async function UserVisasPage() {
                   <th style={tableHeaderStyle}>Nationality</th>
                   <th style={tableHeaderStyle}>Date of Birth</th>
                   <th style={{...tableHeaderStyle, width: "28%"}}>Application type</th>
-                  <th style={tableHeaderStyle}>Submitted on</th>
                   <th style={tableHeaderStyle}>Status</th>
                   <th style={{...tableHeaderStyle, textAlign: "right"}}>Actions</th>
                 </tr>
@@ -213,7 +212,7 @@ export default async function UserVisasPage() {
               <tbody>
                 {submittedVisas.length === 0 ? (
                   <tr>
-                    <td colSpan={8} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
+                    <td colSpan={7} style={{ padding: "30px", textAlign: "center", color: "#6b7280", fontSize: "14px" }}>
                       No submitted applications.
                     </td>
                   </tr>
@@ -232,7 +231,6 @@ export default async function UserVisasPage() {
                           </span>
                         )}
                       </td>
-                      <td style={tableCellStyle}>{visa.submittedAt ? new Date(visa.submittedAt).toLocaleDateString('en-GB') : new Date(visa.createdAt).toLocaleDateString('en-GB')}</td>
                       <td style={tableCellStyle}>
                         <span style={{ display: "inline-block", padding: "3px 10px", backgroundColor: "#d1fae5", color: "#065f46", fontWeight: "600", borderRadius: "12px", fontSize: "12px" }}>
                           {visa.status || "Submitted"}
