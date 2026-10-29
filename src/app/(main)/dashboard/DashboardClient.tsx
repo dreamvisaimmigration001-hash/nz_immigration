@@ -265,7 +265,7 @@ export default function DashboardClient({
                           <td style={tableCellStyle}>{new Date(visa.createdAt).toLocaleDateString('en-GB')}</td>
                           <td style={{ ...tableCellStyle, borderRight: "none", textAlign: "center" }}>
                             <Link
-                              href={`/dashboard/aewv-visa?id=${visa._id}`}
+                              href={`/dashboard/visa`}
                               style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "7px 16px", textDecoration: "none", fontWeight: "600", fontSize: "13px", borderRadius: "2px", display: "inline-block" }}
                             >
                               Continue
@@ -324,7 +324,7 @@ export default function DashboardClient({
                           </td>
                           <td style={{ ...tableCellStyle, borderRight: "none", textAlign: "center" }}>
                             <Link
-                              href={`/dashboard/aewv-visa?id=${visa._id}`}
+                              href={`/dashboard/visa`}
                               style={{ backgroundColor: "#ffffff", border: "1px solid #0062a4", color: "#0062a4", padding: "7px 16px", fontWeight: "600", fontSize: "13px", textDecoration: "none", borderRadius: "2px", display: "inline-block" }}
                             >
                               View
