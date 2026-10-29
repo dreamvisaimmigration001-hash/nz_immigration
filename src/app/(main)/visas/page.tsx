@@ -521,22 +521,6 @@ export default async function UserVisasPage() {
                             alignItems: "center",
                           }}
                         >
-                          <Link
-                            href={`/dashboard/visa`}
-                            style={{
-                              backgroundColor: "#ffffff",
-                              border: "1px solid #0062a4",
-                              color: "#0062a4",
-                              padding: "6px 14px",
-                              fontWeight: "600",
-                              fontSize: "12px",
-                              textDecoration: "none",
-                              borderRadius: "2px",
-                              display: "inline-block",
-                            }}
-                          >
-                            View
-                          </Link>
                           {(visa.documentUrl ||
                             (visa.document && visa.document.length > 0)) && (
                             <a
