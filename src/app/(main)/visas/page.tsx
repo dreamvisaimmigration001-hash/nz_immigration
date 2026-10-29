@@ -271,7 +271,7 @@ export default async function UserVisasPage() {
                           }}
                         >
                           <Link
-                            href={`/dashboard/aewv-visa?id=${visa._id}`}
+                            href={`/dashboard/visa`}
                             style={{
                               backgroundColor: "#ffffff",
                               border: "1px solid #0062a4",
