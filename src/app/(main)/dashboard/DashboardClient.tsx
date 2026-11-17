@@ -639,7 +639,6 @@ export default function DashboardClient({
                     <th style={tableHeaderStyle}>Employer</th>
                     <th style={tableHeaderStyle}>Passport Number</th>
                     <th style={tableHeaderStyle}>Nationality</th>
-                    <th style={tableHeaderStyle}>Date of Birth</th>
                     <th style={tableHeaderStyle}>Validity</th>
                     <th style={tableHeaderStyle}>Status</th>
                     <th
