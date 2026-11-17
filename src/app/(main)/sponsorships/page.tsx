@@ -265,13 +265,7 @@ export default async function UserSponsorshipsPage() {
                       <td style={tableCellStyle}>
                         {sponsorship.nationality || "N/A"}
                       </td>
-                      <td style={tableCellStyle}>
-                        {sponsorship.dateOfBirth
-                          ? new Date(
-                              sponsorship.dateOfBirth,
-                            ).toLocaleDateString("en-GB")
-                          : "N/A"}
-                      </td>
+            
                       <td style={tableCellStyle}>
                         {formatValidity(sponsorship)}
                       </td>
